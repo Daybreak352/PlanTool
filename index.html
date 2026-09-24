@@ -4,14 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#101827" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101b2b'/%3E%3Cpath d='M8 23V14M15 23V9M22 23V5' stroke='%2363d7cf' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101b2b'/%3E%3Cpath d='M8 23V14M15 23V9M22 23V5' stroke='%2363d7cf' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
     <title>PlanTool · 个人学习与任务规划</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/layout.css" />
+    <link rel="stylesheet" href="styles/pages.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="#home" data-nav="home" aria-label="PlanTool 首页">
+        <a
+          class="brand"
+          href="#home"
+          data-nav="home"
+          aria-label="PlanTool 首页"
+        >
           <span class="brand-mark"><i></i><i></i><i></i></span>
           <span>Plan<span>Tool</span></span>
         </a>
@@ -25,9 +36,29 @@
           <button class="nav-item" data-nav="library">知识库</button>
         </nav>
         <div class="data-actions">
-          <button class="icon-button" id="export-data" title="下载备份" aria-label="下载备份">⇩</button>
-          <label class="icon-button" title="导入数据" aria-label="导入数据">⇧<input id="import-data" type="file" accept="application/json" hidden /></label>
-          <button class="icon-button danger" id="clear-data" title="清除数据" aria-label="清除数据">×</button>
+          <button
+            class="icon-button"
+            id="export-data"
+            title="下载备份"
+            aria-label="下载备份"
+          >
+            ⇩
+          </button>
+          <label class="icon-button" title="导入数据" aria-label="导入数据"
+            >⇧<input
+              id="import-data"
+              type="file"
+              accept="application/json"
+              hidden
+          /></label>
+          <button
+            class="icon-button danger"
+            id="clear-data"
+            title="清除数据"
+            aria-label="清除数据"
+          >
+            ×
+          </button>
         </div>
       </header>
 
@@ -39,7 +70,9 @@
               <h1>把今天，过得更有迹可循。</h1>
               <p class="lede">聚焦眼前的计划，剩下的交给 PlanTool 记录。</p>
             </div>
-            <button class="primary-button" data-nav="focus"><span>开始一段专注</span><b>→</b></button>
+            <button class="primary-button" data-nav="focus">
+              <span>开始一段专注</span><b>→</b>
+            </button>
           </div>
 
           <div class="metric-grid" id="home-metrics"></div>
@@ -47,14 +80,20 @@
           <div class="dashboard-grid">
             <article class="panel agenda-panel">
               <div class="panel-heading">
-                <div><p class="eyebrow">TODAY'S RHYTHM</p><h2>今日节奏</h2></div>
+                <div>
+                  <p class="eyebrow">TODAY'S RHYTHM</p>
+                  <h2>今日节奏</h2>
+                </div>
                 <button class="text-button" data-nav="daily">查看任务 →</button>
               </div>
               <div id="today-agenda" class="agenda-list"></div>
             </article>
             <article class="panel memo-panel">
               <div class="panel-heading">
-                <div><p class="eyebrow">QUICK NOTES</p><h2>备忘录</h2></div>
+                <div>
+                  <p class="eyebrow">QUICK NOTES</p>
+                  <h2>备忘录</h2>
+                </div>
                 <button class="text-button" data-nav="focus">管理 →</button>
               </div>
               <div id="home-memos" class="memo-compact-list"></div>
@@ -64,35 +103,70 @@
 
         <section class="view" id="tree-view" data-view="tree">
           <div class="page-heading compact">
-            <div><p class="eyebrow">KNOWLEDGE MAP</p><h1>知识树</h1><p class="lede">搭建你的学习坐标，每一次专注都会沉淀在对应节点。</p></div>
-            <button class="primary-button" id="new-tree">新建知识树 <b>+</b></button>
+            <div>
+              <p class="eyebrow">KNOWLEDGE MAP</p>
+              <h1>知识树</h1>
+              <p class="lede">
+                搭建你的学习坐标，每一次专注都会沉淀在对应节点。
+              </p>
+            </div>
+            <button class="primary-button" id="new-tree">
+              新建知识树 <b>+</b>
+            </button>
           </div>
           <div class="tree-progress panel" id="tree-progress"></div>
           <div class="tree-layout">
             <aside class="panel tree-sidebar">
-              <div class="sidebar-title"><span>我的知识树</span><button class="round-button" id="new-tree-small" aria-label="新建知识树">+</button></div>
+              <div class="sidebar-title">
+                <span>我的知识树</span
+                ><button
+                  class="round-button"
+                  id="new-tree-small"
+                  aria-label="新建知识树"
+                >
+                  +
+                </button>
+              </div>
               <div id="tree-list" class="tree-list"></div>
             </aside>
             <section class="panel tree-workspace">
               <div class="tree-workspace-heading">
-                <div><p class="eyebrow">CURRENT TREE</p><h2 id="current-tree-title"></h2></div>
-                <div class="inline-actions"><button class="ghost-button" id="rename-tree">重命名</button><button class="ghost-button danger-text" id="delete-tree">删除</button></div>
+                <div>
+                  <p class="eyebrow">CURRENT TREE</p>
+                  <h2 id="current-tree-title"></h2>
+                </div>
+                <div class="inline-actions">
+                  <button class="ghost-button" id="rename-tree">重命名</button
+                  ><button class="ghost-button danger-text" id="delete-tree">
+                    删除
+                  </button>
+                </div>
               </div>
               <div id="tree-nodes" class="tree-nodes"></div>
-              <button class="dashed-button" id="add-knowledge-point">+ 添加知识点</button>
+              <button class="dashed-button" id="add-knowledge-point">
+                + 添加知识点
+              </button>
             </section>
           </div>
         </section>
 
         <section class="view" id="focus-view" data-view="focus">
           <div class="page-heading compact">
-            <div><p class="eyebrow">DEEP WORK</p><h1>专注</h1><p class="lede">把注意力交给当下，让进度自然累积。</p></div>
+            <div>
+              <p class="eyebrow">DEEP WORK</p>
+              <h1>专注</h1>
+              <p class="lede">把注意力交给当下，让进度自然累积。</p>
+            </div>
           </div>
           <div class="focus-layout">
             <article class="panel focus-panel">
               <div class="mode-switch" role="tablist">
-                <button class="mode-button active" data-focus-mode="tree">知识树专注</button>
-                <button class="mode-button" data-focus-mode="custom">自定义专注</button>
+                <button class="mode-button active" data-focus-mode="tree">
+                  知识树专注
+                </button>
+                <button class="mode-button" data-focus-mode="custom">
+                  自定义专注
+                </button>
               </div>
               <div id="focus-target" class="focus-target"></div>
               <div class="timer-stage">
@@ -101,61 +175,219 @@
                 <p id="round-label" class="round-label">第 1 / 4 轮</p>
               </div>
               <div class="timer-settings">
-                <label>专注 <input id="focus-minutes" type="number" min="1" max="120" value="25" /> <span>分钟</span></label>
-                <label>休息 <input id="break-minutes" type="number" min="1" max="30" value="5" /> <span>分钟</span></label>
-                <label>轮次 <input id="total-rounds" type="number" min="1" max="12" value="4" /> <span>轮</span></label>
+                <label
+                  >专注
+                  <input
+                    id="focus-minutes"
+                    type="number"
+                    min="1"
+                    max="120"
+                    value="25"
+                  />
+                  <span>分钟</span></label
+                >
+                <label
+                  >休息
+                  <input
+                    id="break-minutes"
+                    type="number"
+                    min="1"
+                    max="30"
+                    value="5"
+                  />
+                  <span>分钟</span></label
+                >
+                <label
+                  >轮次
+                  <input
+                    id="total-rounds"
+                    type="number"
+                    min="1"
+                    max="12"
+                    value="4"
+                  />
+                  <span>轮</span></label
+                >
               </div>
               <div class="timer-actions">
                 <button id="timer-reset" class="ghost-button">重置</button>
-                <button id="timer-start" class="primary-button wide">开始专注 <b>→</b></button>
+                <button id="timer-start" class="primary-button wide">
+                  开始专注 <b>→</b>
+                </button>
               </div>
             </article>
             <aside class="panel memo-manager">
-              <div class="panel-heading"><div><p class="eyebrow">MEMOS</p><h2>备忘录</h2></div><span id="memo-count" class="count-badge"></span></div>
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">MEMOS</p>
+                  <h2>备忘录</h2>
+                </div>
+                <span id="memo-count" class="count-badge"></span>
+              </div>
               <form id="memo-form" class="memo-form">
-                <input id="memo-title" required maxlength="50" placeholder="写下待办事项…" />
-                <input id="memo-minutes" type="number" min="0" max="600" placeholder="分钟（可选）" />
+                <input
+                  id="memo-title"
+                  required
+                  maxlength="50"
+                  placeholder="写下待办事项…"
+                />
+                <input
+                  id="memo-minutes"
+                  type="number"
+                  min="0"
+                  max="600"
+                  placeholder="分钟（可选）"
+                />
                 <button class="round-button" type="submit">+</button>
               </form>
-              <div class="filter-row"><button class="filter-button active" data-memo-filter="open">未完成</button><button class="filter-button" data-memo-filter="done">已归档</button></div>
+              <div class="filter-row">
+                <button class="filter-button active" data-memo-filter="open">
+                  未完成</button
+                ><button class="filter-button" data-memo-filter="done">
+                  已归档
+                </button>
+              </div>
               <div id="memo-list" class="memo-list"></div>
             </aside>
           </div>
         </section>
 
         <section class="view" id="daily-view" data-view="daily">
-          <div class="page-heading compact"><div><p class="eyebrow">DAILY ROUTINE</p><h1>每日任务</h1><p class="lede">重复的小事，也值得被认真看见。</p></div></div>
+          <div class="page-heading compact">
+            <div>
+              <p class="eyebrow">DAILY ROUTINE</p>
+              <h1>每日任务</h1>
+              <p class="lede">重复的小事，也值得被认真看见。</p>
+            </div>
+          </div>
           <div class="daily-layout">
             <article class="panel task-panel">
-              <div class="panel-heading"><div><p class="eyebrow">TODAY</p><h2>今天要做什么？</h2></div><span id="daily-progress-text" class="subtle-stat"></span></div>
-              <form id="daily-form" class="add-row"><input id="daily-title" required maxlength="50" placeholder="添加每日任务" /><button class="primary-button" type="submit">添加 <b>+</b></button></form>
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">TODAY</p>
+                  <h2>今天要做什么？</h2>
+                </div>
+                <span id="daily-progress-text" class="subtle-stat"></span>
+              </div>
+              <form id="daily-form" class="add-row">
+                <input
+                  id="daily-title"
+                  required
+                  maxlength="50"
+                  placeholder="添加每日任务"
+                /><button class="primary-button" type="submit">
+                  添加 <b>+</b>
+                </button>
+              </form>
               <div id="daily-task-list" class="daily-task-list"></div>
             </article>
-            <aside class="panel calendar-panel"><div class="panel-heading"><div><p class="eyebrow">CHECK-IN</p><h2>本月打卡</h2></div><div class="month-controls"><button id="daily-prev-month">‹</button><span id="daily-month-title"></span><button id="daily-next-month">›</button></div></div><div id="daily-calendar" class="calendar-grid"></div></aside>
+            <aside class="panel calendar-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">CHECK-IN</p>
+                  <h2>本月打卡</h2>
+                </div>
+                <div class="month-controls">
+                  <button id="daily-prev-month">‹</button
+                  ><span id="daily-month-title"></span
+                  ><button id="daily-next-month">›</button>
+                </div>
+              </div>
+              <div id="daily-calendar" class="calendar-grid"></div>
+            </aside>
           </div>
         </section>
 
         <section class="view" id="project-view" data-view="project">
-          <div class="page-heading compact"><div><p class="eyebrow">PROJECT ROADMAP</p><h1>项目进展</h1><p class="lede">把大目标切成可抵达的下一步。</p></div><button class="primary-button" id="new-project">新建项目 <b>+</b></button></div>
+          <div class="page-heading compact">
+            <div>
+              <p class="eyebrow">PROJECT ROADMAP</p>
+              <h1>项目进展</h1>
+              <p class="lede">把大目标切成可抵达的下一步。</p>
+            </div>
+            <button class="primary-button" id="new-project">
+              新建项目 <b>+</b>
+            </button>
+          </div>
           <div id="project-list" class="project-list"></div>
         </section>
 
         <section class="view" id="stats-view" data-view="stats">
-          <div class="page-heading compact"><div><p class="eyebrow">REFLECT & ADJUST</p><h1>统计</h1><p class="lede">用数据回望努力，找到更适合自己的节奏。</p></div></div>
-          <div class="stats-grid">
-            <article class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow">TODAY'S SHARE</p><h2>今日时长分布</h2></div><span id="today-total-label" class="subtle-stat"></span></div><div class="donut-wrap"><div id="donut-chart" class="donut"><div><strong id="donut-total">0</strong><span>分钟</span></div></div><div id="donut-legend" class="donut-legend"></div></div></article>
-            <article class="panel ranking-panel"><div class="panel-heading"><div><p class="eyebrow">TIME RANKING</p><h2>时长排行榜</h2></div></div><div class="ranking-tabs"><button class="filter-button active" data-ranking="category">分类总榜</button><button class="filter-button" data-ranking="subject">学科专注</button></div><div id="ranking-list" class="ranking-list"></div></article>
+          <div class="page-heading compact">
+            <div>
+              <p class="eyebrow">REFLECT & ADJUST</p>
+              <h1>统计</h1>
+              <p class="lede">用数据回望努力，找到更适合自己的节奏。</p>
+            </div>
           </div>
-          <article class="panel month-panel"><div class="panel-heading"><div><p class="eyebrow">MONTHLY REVIEW</p><h2>月度总览</h2></div><div class="month-controls"><button id="stats-prev-month">‹</button><span id="stats-month-title"></span><button id="stats-next-month">›</button></div></div><div id="stats-calendar" class="calendar-grid stats-calendar"></div><div id="selected-day-details" class="day-details"></div></article>
+          <div class="stats-grid">
+            <article class="panel chart-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">TODAY'S SHARE</p>
+                  <h2>今日时长分布</h2>
+                </div>
+                <span id="today-total-label" class="subtle-stat"></span>
+              </div>
+              <div class="donut-wrap">
+                <div id="donut-chart" class="donut">
+                  <div>
+                    <strong id="donut-total">0</strong><span>分钟</span>
+                  </div>
+                </div>
+                <div id="donut-legend" class="donut-legend"></div>
+              </div>
+            </article>
+            <article class="panel ranking-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">TIME RANKING</p>
+                  <h2>时长排行榜</h2>
+                </div>
+              </div>
+              <div class="ranking-tabs">
+                <button class="filter-button active" data-ranking="category">
+                  分类总榜</button
+                ><button class="filter-button" data-ranking="subject">
+                  学科专注
+                </button>
+              </div>
+              <div id="ranking-list" class="ranking-list"></div>
+            </article>
+          </div>
+          <article class="panel month-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">MONTHLY REVIEW</p>
+                <h2>月度总览</h2>
+              </div>
+              <div class="month-controls">
+                <button id="stats-prev-month">‹</button
+                ><span id="stats-month-title"></span
+                ><button id="stats-next-month">›</button>
+              </div>
+            </div>
+            <div id="stats-calendar" class="calendar-grid stats-calendar"></div>
+            <div id="selected-day-details" class="day-details"></div>
+          </article>
         </section>
 
         <section class="view" id="library-view" data-view="library">
-          <div class="page-heading compact"><div><p class="eyebrow">SCIENCE LIBRARY</p><h1>科学总库</h1><p class="lede">只阅读、可导入，不会产生学习记录。</p></div></div>
+          <div class="page-heading compact">
+            <div>
+              <p class="eyebrow">SCIENCE LIBRARY</p>
+              <h1>科学总库</h1>
+              <p class="lede">只阅读、可导入，不会产生学习记录。</p>
+            </div>
+          </div>
           <div id="library-list" class="library-grid"></div>
         </section>
       </main>
     </div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <script src="app.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/views.js"></script>
+    <script src="js/actions.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
