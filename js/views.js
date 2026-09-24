@@ -72,14 +72,23 @@ function renderTree() {
   const percent = all.length ? Math.round((mastered / all.length) * 100) : 0;
   document.querySelector("#tree-progress").innerHTML =
     `<strong>全局掌握进度</strong><div class="progress-line"><i style="width:${percent}%"></i></div><small>${mastered} / ${all.length} · ${percent}%</small>`;
-  document.querySelector("#tree-list").innerHTML = state.trees
-    .map(
-      (tree) =>
-        `<button class="tree-list-item ${tree.id === state.selectedTreeId ? "active" : ""}" data-tree-select="${tree.id}"><span class="tree-list-icon">⌘</span><span>${esc(tree.title)}</span><small>${allPoints(tree).filter((point) => point.mastered).length}/${allPoints(tree).length}</small></button>`,
-    )
-    .join("");
+  document.querySelector("#tree-list").innerHTML =
+    state.trees
+      .map(
+        (tree) =>
+          `<button class="tree-list-item ${tree.id === state.selectedTreeId ? "active" : ""}" data-tree-select="${tree.id}"><span class="tree-list-icon">⌘</span><span>${esc(tree.title)}</span><small>${allPoints(tree).filter((point) => point.mastered).length}/${allPoints(tree).length}</small></button>`,
+      )
+      .join("") || `<p class="empty">还没有知识树。</p>`;
   const tree = getTree();
-  if (!tree) return;
+  for (const id of ["#rename-tree", "#delete-tree", "#add-knowledge-point"])
+    document.querySelector(id).disabled = !tree;
+  if (!tree) {
+    document.querySelector("#current-tree-title").textContent =
+      "尚未创建知识树";
+    document.querySelector("#tree-nodes").innerHTML =
+      `<p class="empty">新建或导入知识树后，在这里管理知识点。</p>`;
+    return;
+  }
   document.querySelector("#current-tree-title").textContent = tree.title;
   document.querySelector("#tree-nodes").innerHTML =
     tree.modules
@@ -118,16 +127,18 @@ function renderFocus() {
   if (focusMode === "tree") {
     const tree = getTree();
     const selected = selectedPoint();
-    target.innerHTML = `<div class="target-fields"><select id="focus-tree">${state.trees.map((item) => `<option value="${item.id}" ${item.id === tree?.id ? "selected" : ""}>${esc(item.title)}</option>`).join("")}</select><select id="focus-section">${tree ? tree.modules.flatMap((module) => module.sections.map((section) => `<option value="${section.id}">${esc(section.title)}</option>`)).join("") : "<option>暂无章节</option>"}</select><select id="focus-point">${
-      tree
-        ? allPoints(tree)
-            .map(
-              (point) =>
-                `<option value="${point.id}" ${point.id === selected?.point.id ? "selected" : ""}>${esc(point.title)}</option>`,
-            )
-            .join("")
-        : "<option>暂无知识点</option>"
-    }</select></div>`;
+    target.innerHTML = !tree
+      ? `<p class="empty">先创建或导入知识树，再选择知识点开始专注。</p>`
+      : `<div class="target-fields"><select id="focus-tree">${state.trees.map((item) => `<option value="${item.id}" ${item.id === tree?.id ? "selected" : ""}>${esc(item.title)}</option>`).join("")}</select><select id="focus-section">${tree.modules.flatMap((module) => module.sections.map((section) => `<option value="${section.id}">${esc(section.title)}</option>`)).join("")}</select><select id="focus-point">${
+          tree
+            ? allPoints(tree)
+                .map(
+                  (point) =>
+                    `<option value="${point.id}" ${point.id === selected?.point.id ? "selected" : ""}>${esc(point.title)}</option>`,
+                )
+                .join("")
+            : "<option>暂无知识点</option>"
+        }</select></div>`;
   } else {
     target.innerHTML = `<div class="custom-target"><input id="custom-focus-title" maxlength="50" placeholder="例如：阅读、绘画、运动" /><select id="custom-focus-category"><option>学习</option><option>运动</option><option>绘画</option><option>阅读</option><option>其他</option></select></div>`;
   }

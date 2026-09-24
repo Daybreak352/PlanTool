@@ -16,6 +16,15 @@ function readTimerSettings() {
   save();
 }
 function startOrPauseTimer() {
+  if (
+    !timer.running &&
+    timer.phase === "focus" &&
+    focusMode === "tree" &&
+    !document.querySelector("#focus-point")?.value
+  ) {
+    toast("请先选择知识点，或切换到自定义专注");
+    return;
+  }
   readTimerSettings();
   if (timer.running) {
     clearInterval(timer.interval);

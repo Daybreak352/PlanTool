@@ -151,13 +151,9 @@ document.addEventListener("click", (event) => {
     }
     case "delete-tree": {
       const tree = getTree();
-      if (state.trees.length === 1) {
-        toast("至少保留一棵知识树");
-        break;
-      }
       if (confirm(`删除知识树“${tree.title}”？`)) {
         state.trees = state.trees.filter((item) => item.id !== tree.id);
-        state.selectedTreeId = state.trees[0].id;
+        state.selectedTreeId = state.trees[0]?.id ?? null;
         save();
         renderAll();
       }
@@ -297,7 +293,7 @@ document.querySelector("#import-data").addEventListener("change", (event) => {
   event.target.value = "";
 });
 document.querySelector("#clear-data").addEventListener("click", () => {
-  if (!confirm("确定清除所有数据并恢复示例数据？")) return;
+  if (!confirm("确定清除所有数据并恢复空白初始状态？")) return;
   if (!confirm("此操作无法撤销，确认继续？")) return;
   state = defaultState();
   save();
