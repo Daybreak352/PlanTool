@@ -8,7 +8,7 @@
 
 ## 在线访问
 
-项目可通过 GitHub Pages 发布。发布后访问地址为 `https://daybreak352.github.io/PlanTool/`。
+公开访问地址：[PlanTool 网页](https://daybreak352.github.io/PlanTool/)。GitHub Pages 从 `main` 分支根目录发布；以后将修改推送到 `main`，网页会自动更新。
 
 每位访问者的数据只保存在自己的浏览器中，不会自动同步给其他人或其他设备。需要换设备时，先下载 JSON 备份，再在新设备导入。
 
