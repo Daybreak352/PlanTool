@@ -1,5 +1,20 @@
 // Application entry point: event wiring and startup only.
 
+function syncNavigation() {
+  let current;
+  document.querySelectorAll(".nav-item").forEach((item) => {
+    const active = item.dataset.nav === activeView;
+    item.classList.toggle("active", active);
+    if (active) {
+      item.setAttribute("aria-current", "page");
+      current = item;
+    } else item.removeAttribute("aria-current");
+  });
+  if (window.matchMedia("(max-width: 760px)").matches) {
+    current?.scrollIntoView({ block: "nearest", inline: "center" });
+  }
+}
+
 document.addEventListener("click", (event) => {
   const target = event.target.closest(
     "button, [data-nav], [data-home-memo], [data-memo-toggle], [data-daily-toggle], [data-stage-toggle], [data-node-action]",
@@ -13,12 +28,7 @@ document.addEventListener("click", (event) => {
       .forEach((view) =>
         view.classList.toggle("active", view.dataset.view === activeView),
       );
-    document.querySelectorAll(".nav-item").forEach((item) => {
-      const active = item.dataset.nav === activeView;
-      item.classList.toggle("active", active);
-      if (active) item.setAttribute("aria-current", "page");
-      else item.removeAttribute("aria-current");
-    });
+    syncNavigation();
     window.location.hash = activeView;
     return;
   }
@@ -320,10 +330,5 @@ if (
       view.classList.toggle("active", view.dataset.view === activeView),
     );
 }
-document.querySelectorAll(".nav-item").forEach((item) => {
-  const active = item.dataset.nav === activeView;
-  item.classList.toggle("active", active);
-  if (active) item.setAttribute("aria-current", "page");
-  else item.removeAttribute("aria-current");
-});
+syncNavigation();
 renderAll();

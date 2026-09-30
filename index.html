@@ -3,18 +3,66 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#162b30" />
+    <meta name="theme-color" content="#050b14" />
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101b2b'/%3E%3Cpath d='M8 23V14M15 23V9M22 23V5' stroke='%2363d7cf' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"
     />
-    <title>PlanTool · 个人学习与任务规划</title>
+    <title>UEG · PlanTool 行星任务控制台</title>
     <link rel="stylesheet" href="styles/base.css" />
     <link rel="stylesheet" href="styles/layout.css" />
     <link rel="stylesheet" href="styles/pages.css" />
     <link rel="stylesheet" href="styles/responsive.css" />
+    <link rel="stylesheet" href="styles/theme-scifi.css" />
+    <link rel="stylesheet" href="styles/space-scene.css" />
   </head>
   <body>
+    <div class="boot-screen" id="boot-screen" role="status" aria-live="polite">
+      <div class="boot-topline">
+        <span class="ueg-emblem" aria-hidden="true"><i></i></span>
+        <strong>UEG</strong>
+        <span>PLANETARY OPERATIONS NETWORK</span>
+      </div>
+      <div class="boot-orbit" aria-hidden="true">
+        <span class="boot-orbit-ring ring-one"></span>
+        <span class="boot-orbit-ring ring-two"></span>
+        <span class="boot-orbit-core"></span>
+        <span class="boot-orbit-satellite"></span>
+      </div>
+      <div class="boot-readout">
+        <p class="boot-kicker">UEG / EYES ON EARTH</p>
+        <h2>正在建立地球航线</h2>
+        <p id="boot-status">连接本地任务档案…</p>
+        <div class="boot-progress" aria-hidden="true">
+          <span id="boot-progress"></span>
+        </div>
+        <div class="boot-progress-meta" aria-hidden="true">
+          <span>LOCAL SYSTEM INITIALIZATION</span
+          ><span id="boot-percent">00%</span>
+        </div>
+        <button id="skip-boot" type="button">跳过启动动画 →</button>
+      </div>
+    </div>
+    <div class="space-backdrop" aria-hidden="true">
+      <div class="starfield starfield-far"></div>
+      <div class="starfield starfield-near"></div>
+      <div class="flight-trail"></div>
+      <div class="planet-system">
+        <div class="planet-orbit orbit-outer"></div>
+        <div class="planet-orbit orbit-inner"></div>
+        <div class="earth-disc">
+          <div class="earth-map"></div>
+          <div class="earth-clouds"></div>
+          <div class="earth-light"></div>
+        </div>
+        <span class="engine-flare flare-one"></span>
+        <span class="engine-flare flare-two"></span>
+        <span class="engine-flare flare-three"></span>
+        <div class="planet-telemetry">
+          <span>UEG · SOL III</span><span>航线状态 / 稳定</span>
+        </div>
+      </div>
+    </div>
     <div class="app-shell">
       <header class="topbar">
         <a
@@ -23,13 +71,15 @@
           data-nav="home"
           aria-label="PlanTool 首页"
         >
-          <span class="brand-mark"><i></i><i></i><i></i></span>
+          <span class="brand-mark" aria-hidden="true"
+            ><i></i><i></i><i></i
+          ></span>
           <span class="brand-copy"
-            ><strong>Plan<span>Tool</span></strong
-            ><small>学习与计划工作台</small></span
+            ><strong>UEG<span> / PlanTool</span></strong
+            ><small>行星任务控制台</small></span
           >
         </a>
-        <p class="sidebar-caption">工作区</p>
+        <p class="sidebar-caption">任务模块 / MODULES</p>
         <nav class="main-nav" aria-label="主导航">
           <button class="nav-item active" data-nav="home">总览</button>
           <button class="nav-item" data-nav="tree">知识树</button>
@@ -40,7 +90,7 @@
           <button class="nav-item" data-nav="library">知识库</button>
         </nav>
         <div class="data-actions">
-          <p class="sidebar-caption">本机数据</p>
+          <p class="sidebar-caption">本地档案 / ARCHIVE</p>
           <button
             class="icon-button"
             id="export-data"
@@ -84,12 +134,17 @@
         <section class="view active" id="home-view" data-view="home">
           <div class="page-heading home-heading">
             <div>
-              <p class="eyebrow" id="today-label">TODAY</p>
-              <h1>今日工作台</h1>
-              <p class="lede">安排任务、进入专注，再回看今天的投入。</p>
+              <p class="eyebrow">
+                UEG / 今日任务 <span id="today-label"></span>
+              </p>
+              <h1>让今天的每一步<br /><span>都有航向。</span></h1>
+              <p class="lede">设定任务坐标，启动专注，记录每一次推进。</p>
+              <p class="home-system-note">
+                <span></span>本地系统运行中 · 数据仅保存在此浏览器
+              </p>
             </div>
             <button class="primary-button" data-nav="focus">
-              <span>开始一段专注</span><b>→</b>
+              <span>启动一段专注</span><b>→</b>
             </button>
           </div>
 
@@ -407,5 +462,6 @@
     <script src="js/views.js"></script>
     <script src="js/actions.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/boot.js"></script>
   </body>
 </html>

@@ -166,8 +166,8 @@ function updateTimerDisplay() {
       ? "继续专注 <b>→</b>"
       : "开始专注 <b>→</b>";
   document.title = timer.running
-    ? `${document.querySelector("#timer-display").textContent} · PlanTool`
-    : "PlanTool · 个人学习与任务规划";
+    ? `${document.querySelector("#timer-display").textContent} · UEG PlanTool`
+    : "UEG · PlanTool 行星任务控制台";
 }
 
 function renderMemos() {
@@ -274,7 +274,7 @@ function renderStats() {
           return segment;
         })
         .join(", ")
-    : "#e8eeee 0deg 360deg";
+    : "var(--surface-muted) 0deg 360deg";
   document.querySelector("#donut-chart").style.background =
     `conic-gradient(${gradient})`;
   document.querySelector("#donut-legend").innerHTML = totals.length
