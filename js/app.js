@@ -2,21 +2,23 @@
 
 document.addEventListener("click", (event) => {
   const target = event.target.closest(
-    "button, [data-home-memo], [data-memo-toggle], [data-daily-toggle], [data-stage-toggle], [data-node-action]",
+    "button, [data-nav], [data-home-memo], [data-memo-toggle], [data-daily-toggle], [data-stage-toggle], [data-node-action]",
   );
   if (!target) return;
   if (target.dataset.nav) {
+    if (target.tagName === "A") event.preventDefault();
     activeView = target.dataset.nav;
     document
       .querySelectorAll(".view")
       .forEach((view) =>
         view.classList.toggle("active", view.dataset.view === activeView),
       );
-    document
-      .querySelectorAll(".nav-item")
-      .forEach((item) =>
-        item.classList.toggle("active", item.dataset.nav === activeView),
-      );
+    document.querySelectorAll(".nav-item").forEach((item) => {
+      const active = item.dataset.nav === activeView;
+      item.classList.toggle("active", active);
+      if (active) item.setAttribute("aria-current", "page");
+      else item.removeAttribute("aria-current");
+    });
     window.location.hash = activeView;
     return;
   }
@@ -270,6 +272,9 @@ document.querySelector("#export-data").addEventListener("click", () => {
   URL.revokeObjectURL(url);
   toast("备份文件已下载");
 });
+document.querySelector("#import-trigger").addEventListener("click", () => {
+  document.querySelector("#import-data").click();
+});
 document.querySelector("#import-data").addEventListener("change", (event) => {
   const file = event.target.files?.[0];
   if (!file) return;
@@ -314,10 +319,11 @@ if (
     .forEach((view) =>
       view.classList.toggle("active", view.dataset.view === activeView),
     );
-  document
-    .querySelectorAll(".nav-item")
-    .forEach((item) =>
-      item.classList.toggle("active", item.dataset.nav === activeView),
-    );
 }
+document.querySelectorAll(".nav-item").forEach((item) => {
+  const active = item.dataset.nav === activeView;
+  item.classList.toggle("active", active);
+  if (active) item.setAttribute("aria-current", "page");
+  else item.removeAttribute("aria-current");
+});
 renderAll();

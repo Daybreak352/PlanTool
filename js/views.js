@@ -22,9 +22,9 @@ function renderHome() {
     ? Math.round((mastered / points.length) * 100)
     : 0;
   document.querySelector("#home-metrics").innerHTML = [
-    ["累计专注", minutesText(focusMinutes), "每一次投入都算数"],
-    ["今日完成", todayDone, "件已完成事项"],
-    ["知识树", state.trees.length, "个正在生长的主题"],
+    ["累计专注", minutesText(focusMinutes), "已记录的专注时间"],
+    ["今日完成", todayDone, "今日完成事项"],
+    ["知识树", state.trees.length, "已创建的学习主题"],
     ["整体掌握", `${percentage}%`, `${mastered} / ${points.length} 个知识点`],
   ]
     .map(
@@ -52,7 +52,7 @@ function renderHome() {
             `<div class="agenda-item"><i class="agenda-dot ${item.done ? "done" : ""}"></i><div class="agenda-copy"><strong>${esc(item.title)}</strong><small>${item.meta}</small></div><span class="agenda-status ${item.done ? "" : "pending"}">${item.done ? "已完成" : "待完成"}</span></div>`,
         )
         .join("")
-    : `<p class="empty">今天没有待办，去安排一个小目标吧。</p>`;
+    : `<p class="empty">今天还没有任务。去「每日任务」添加第一项。</p>`;
   const openMemos = state.memos.filter((memo) => !memo.done).slice(0, 4);
   document.querySelector("#home-memos").innerHTML = openMemos.length
     ? openMemos
@@ -61,7 +61,7 @@ function renderHome() {
             `<label class="memo-compact"><input class="check" type="checkbox" data-home-memo="${memo.id}" /><span>${esc(memo.title)}</span></label>`,
         )
         .join("")
-    : `<p class="empty">备忘录已经清空，真不错。</p>`;
+    : `<p class="empty">暂无未完成备忘录。</p>`;
 }
 
 function renderTree() {

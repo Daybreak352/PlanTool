@@ -3,34 +3,22 @@
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
+  gap: 0;
   margin-bottom: 20px;
-}
-.metric-card {
-  padding: 20px;
-  min-height: 135px;
-  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
   overflow: hidden;
 }
-.metric-card:after {
-  content: "";
-  position: absolute;
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  right: -34px;
-  bottom: -39px;
-  background: var(--teal-pale);
-  opacity: 0.8;
+.metric-card {
+  padding: 22px 24px;
+  min-height: 132px;
+  border: 0;
+  border-radius: 0;
+  border-right: 1px solid var(--line);
 }
-.metric-card:nth-child(2):after {
-  background: #eeeaff;
-}
-.metric-card:nth-child(3):after {
-  background: #fff0df;
-}
-.metric-card:nth-child(4):after {
-  background: #e8f3ff;
+.metric-card:last-child {
+  border-right: 0;
 }
 .metric-label {
   font-size: 12px;
@@ -38,23 +26,22 @@
   font-weight: 700;
 }
 .metric-value {
-  font:
-    700 30px/1.1 "DM Mono",
-    monospace;
-  letter-spacing: -2px;
-  margin-top: 21px;
+  font-size: 31px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
+  margin-top: 18px;
 }
 .metric-unit {
-  font:
-    600 12px Manrope,
-    sans-serif;
+  font-size: 12px;
+  font-weight: 600;
   letter-spacing: 0;
   margin-left: 4px;
   color: var(--muted);
 }
 .metric-note {
   font-size: 11px;
-  color: #7f9297;
+  color: var(--muted);
   margin-top: 8px;
 }
 .dashboard-grid,
@@ -158,7 +145,7 @@
   font-size: 13px;
   line-height: 1.7;
   padding: 18px 0;
-  text-align: center;
+  text-align: left;
 }
 .tree-progress {
   display: grid;
@@ -389,26 +376,29 @@
 }
 .timer-stage {
   text-align: center;
-  padding: 27px 0 22px;
+  padding: 30px 16px 27px;
+  margin: 18px 0;
+  border-radius: 10px;
+  background: #17363d;
 }
 .timer-phase {
-  font:
-    700 11px "DM Mono",
-    monospace;
-  letter-spacing: 1.2px;
-  color: var(--brand);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #91d8ca;
   margin: 0 0 9px;
 }
 .timer-display {
-  font:
-    500 clamp(66px, 11vw, 112px) / 1 "DM Mono",
-    monospace;
-  letter-spacing: -7px;
-  color: var(--navy);
+  font-size: clamp(64px, 9vw, 104px);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.07em;
+  color: #f6fbfa;
 }
 .round-label {
   margin: 14px 0 0;
-  color: var(--muted);
+  color: #afc8ca;
   font-size: 12px;
 }
 .timer-settings {
@@ -583,8 +573,8 @@
 .month-controls button {
   border: 1px solid var(--line);
   background: #fff;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 6px;
   color: #65757a;
 }
@@ -879,29 +869,18 @@
   gap: 16px;
 }
 .library-card {
-  padding: 21px;
+  padding: 24px;
   position: relative;
-  overflow: hidden;
-  min-height: 190px;
-}
-.library-card:after {
-  content: "";
-  width: 120px;
-  height: 120px;
-  position: absolute;
-  right: -40px;
-  bottom: -45px;
-  border-radius: 50%;
-  background: var(--teal-pale);
-}
-.library-card:nth-child(2):after {
-  background: #eeeaff;
-}
-.library-card:nth-child(3):after {
-  background: #fff0df;
+  min-height: 208px;
 }
 .library-card .library-icon {
-  font-size: 24px;
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: var(--teal-pale);
+  font-size: 22px;
 }
 .library-card h3 {
   margin: 18px 0 7px;

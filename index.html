@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#101827" />
+    <meta name="theme-color" content="#162b30" />
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101b2b'/%3E%3Cpath d='M8 23V14M15 23V9M22 23V5' stroke='%2363d7cf' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"
@@ -24,8 +24,12 @@
           aria-label="PlanTool 首页"
         >
           <span class="brand-mark"><i></i><i></i><i></i></span>
-          <span>Plan<span>Tool</span></span>
+          <span class="brand-copy"
+            ><strong>Plan<span>Tool</span></strong
+            ><small>学习与计划工作台</small></span
+          >
         </a>
+        <p class="sidebar-caption">工作区</p>
         <nav class="main-nav" aria-label="主导航">
           <button class="nav-item active" data-nav="home">总览</button>
           <button class="nav-item" data-nav="tree">知识树</button>
@@ -36,29 +40,43 @@
           <button class="nav-item" data-nav="library">知识库</button>
         </nav>
         <div class="data-actions">
+          <p class="sidebar-caption">本机数据</p>
           <button
             class="icon-button"
             id="export-data"
             title="下载备份"
             aria-label="下载备份"
           >
-            ⇩
+            <span class="action-icon" aria-hidden="true">↓</span
+            ><span class="action-label">下载备份</span>
           </button>
-          <label class="icon-button" title="导入数据" aria-label="导入数据"
-            >⇧<input
-              id="import-data"
-              type="file"
-              accept="application/json"
-              hidden
-          /></label>
+          <button
+            class="icon-button"
+            id="import-trigger"
+            title="导入数据"
+            aria-label="导入数据"
+          >
+            <span class="action-icon" aria-hidden="true">↑</span
+            ><span class="action-label">导入数据</span>
+          </button>
+          <input
+            id="import-data"
+            type="file"
+            accept="application/json"
+            hidden
+          />
           <button
             class="icon-button danger"
             id="clear-data"
             title="清除数据"
             aria-label="清除数据"
           >
-            ×
+            <span class="action-icon" aria-hidden="true">×</span
+            ><span class="action-label">清除数据</span>
           </button>
+          <p class="sidebar-note">
+            数据仅保存在此浏览器。<br />换设备前请先下载备份。
+          </p>
         </div>
       </header>
 
@@ -67,8 +85,8 @@
           <div class="page-heading home-heading">
             <div>
               <p class="eyebrow" id="today-label">TODAY</p>
-              <h1>把今天，过得更有迹可循。</h1>
-              <p class="lede">聚焦眼前的计划，剩下的交给 PlanTool 记录。</p>
+              <h1>今日工作台</h1>
+              <p class="lede">安排任务、进入专注，再回看今天的投入。</p>
             </div>
             <button class="primary-button" data-nav="focus">
               <span>开始一段专注</span><b>→</b>
@@ -81,8 +99,8 @@
             <article class="panel agenda-panel">
               <div class="panel-heading">
                 <div>
-                  <p class="eyebrow">TODAY'S RHYTHM</p>
-                  <h2>今日节奏</h2>
+                  <p class="eyebrow">今日安排</p>
+                  <h2>待完成与已完成</h2>
                 </div>
                 <button class="text-button" data-nav="daily">查看任务 →</button>
               </div>
@@ -91,7 +109,7 @@
             <article class="panel memo-panel">
               <div class="panel-heading">
                 <div>
-                  <p class="eyebrow">QUICK NOTES</p>
+                  <p class="eyebrow">临时事项</p>
                   <h2>备忘录</h2>
                 </div>
                 <button class="text-button" data-nav="focus">管理 →</button>
@@ -104,7 +122,7 @@
         <section class="view" id="tree-view" data-view="tree">
           <div class="page-heading compact">
             <div>
-              <p class="eyebrow">KNOWLEDGE MAP</p>
+              <p class="eyebrow">学习结构</p>
               <h1>知识树</h1>
               <p class="lede">
                 搭建你的学习坐标，每一次专注都会沉淀在对应节点。
@@ -132,7 +150,7 @@
             <section class="panel tree-workspace">
               <div class="tree-workspace-heading">
                 <div>
-                  <p class="eyebrow">CURRENT TREE</p>
+                  <p class="eyebrow">当前主题</p>
                   <h2 id="current-tree-title"></h2>
                 </div>
                 <div class="inline-actions">
@@ -153,7 +171,7 @@
         <section class="view" id="focus-view" data-view="focus">
           <div class="page-heading compact">
             <div>
-              <p class="eyebrow">DEEP WORK</p>
+              <p class="eyebrow">计时工作区</p>
               <h1>专注</h1>
               <p class="lede">把注意力交给当下，让进度自然累积。</p>
             </div>
@@ -219,7 +237,7 @@
             <aside class="panel memo-manager">
               <div class="panel-heading">
                 <div>
-                  <p class="eyebrow">MEMOS</p>
+                  <p class="eyebrow">随手待办</p>
                   <h2>备忘录</h2>
                 </div>
                 <span id="memo-count" class="count-badge"></span>
@@ -255,7 +273,7 @@
         <section class="view" id="daily-view" data-view="daily">
           <div class="page-heading compact">
             <div>
-              <p class="eyebrow">DAILY ROUTINE</p>
+              <p class="eyebrow">重复任务</p>
               <h1>每日任务</h1>
               <p class="lede">重复的小事，也值得被认真看见。</p>
             </div>
@@ -264,7 +282,7 @@
             <article class="panel task-panel">
               <div class="panel-heading">
                 <div>
-                  <p class="eyebrow">TODAY</p>
+                  <p class="eyebrow">本日清单</p>
                   <h2>今天要做什么？</h2>
                 </div>
                 <span id="daily-progress-text" class="subtle-stat"></span>
@@ -284,7 +302,7 @@
             <aside class="panel calendar-panel">
               <div class="panel-heading">
                 <div>
-                  <p class="eyebrow">CHECK-IN</p>
+                  <p class="eyebrow">打卡记录</p>
                   <h2>本月打卡</h2>
                 </div>
                 <div class="month-controls">
@@ -301,7 +319,7 @@
         <section class="view" id="project-view" data-view="project">
           <div class="page-heading compact">
             <div>
-              <p class="eyebrow">PROJECT ROADMAP</p>
+              <p class="eyebrow">阶段目标</p>
               <h1>项目进展</h1>
               <p class="lede">把大目标切成可抵达的下一步。</p>
             </div>
@@ -315,7 +333,7 @@
         <section class="view" id="stats-view" data-view="stats">
           <div class="page-heading compact">
             <div>
-              <p class="eyebrow">REFLECT & ADJUST</p>
+              <p class="eyebrow">记录回顾</p>
               <h1>统计</h1>
               <p class="lede">用数据回望努力，找到更适合自己的节奏。</p>
             </div>
@@ -324,7 +342,7 @@
             <article class="panel chart-panel">
               <div class="panel-heading">
                 <div>
-                  <p class="eyebrow">TODAY'S SHARE</p>
+                  <p class="eyebrow">时间分配</p>
                   <h2>今日时长分布</h2>
                 </div>
                 <span id="today-total-label" class="subtle-stat"></span>
@@ -341,7 +359,7 @@
             <article class="panel ranking-panel">
               <div class="panel-heading">
                 <div>
-                  <p class="eyebrow">TIME RANKING</p>
+                  <p class="eyebrow">累计投入</p>
                   <h2>时长排行榜</h2>
                 </div>
               </div>
@@ -358,7 +376,7 @@
           <article class="panel month-panel">
             <div class="panel-heading">
               <div>
-                <p class="eyebrow">MONTHLY REVIEW</p>
+                <p class="eyebrow">按日回看</p>
                 <h2>月度总览</h2>
               </div>
               <div class="month-controls">
@@ -375,7 +393,7 @@
         <section class="view" id="library-view" data-view="library">
           <div class="page-heading compact">
             <div>
-              <p class="eyebrow">SCIENCE LIBRARY</p>
+              <p class="eyebrow">学科模板</p>
               <h1>科学总库</h1>
               <p class="lede">只阅读、可导入，不会产生学习记录。</p>
             </div>
