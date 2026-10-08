@@ -1,0 +1,240 @@
+/* Restrained motion: one orbital boot sequence and short view transitions. */
+.boot-screen {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    repeating-radial-gradient(
+      circle at 50% 42%,
+      transparent 0 116px,
+      rgba(240, 240, 237, 0.14) 117px 118px,
+      transparent 119px 154px
+    ),
+    radial-gradient(circle at 50% 42%, #252525, #080808 62%);
+  color: #f4f4f0;
+  transition:
+    opacity 0.45s ease,
+    visibility 0.45s ease;
+}
+.boot-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 16% 20%, #dededa 0 2px, transparent 3px),
+    radial-gradient(circle at 69% 32%, #dededa 0 1px, transparent 2px),
+    radial-gradient(circle at 78% 77%, #dededa 0 2px, transparent 3px),
+    radial-gradient(circle at 27% 73%, #dededa 0 1px, transparent 2px);
+  opacity: 0.46;
+}
+.boot-screen.is-done {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.boot-topline {
+  position: absolute;
+  top: clamp(22px, 3vw, 45px);
+  left: clamp(22px, 3vw, 54px);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+}
+.boot-topline strong {
+  font-size: 17px;
+}
+.boot-topline > span:last-child {
+  padding-left: 15px;
+  border-left: 1px solid #82827e;
+  color: #aaa9a5;
+}
+.ueg-emblem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #e9e9e4;
+  border-radius: 50%;
+  transform: rotate(-25deg);
+}
+.ueg-emblem::before {
+  content: "";
+  position: absolute;
+  width: 37px;
+  height: 11px;
+  border: 1px solid #d7d7d2;
+  border-radius: 50%;
+}
+.ueg-emblem i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff;
+}
+.boot-orbit {
+  position: relative;
+  width: min(48vw, 410px);
+  aspect-ratio: 1;
+  margin-top: -10vh;
+}
+.boot-orbit-ring {
+  position: absolute;
+  inset: 3%;
+  border: 1px solid rgba(243, 243, 239, 0.38);
+  border-radius: 50%;
+  transform: rotate(-24deg) scaleY(0.57);
+}
+.boot-orbit-ring.ring-two {
+  inset: -12%;
+  border-color: rgba(241, 241, 236, 0.22);
+  transform: rotate(37deg) scaleY(0.48);
+}
+.boot-orbit-core {
+  position: absolute;
+  inset: 23%;
+  overflow: hidden;
+  border: 1px solid #bfc1bd;
+  border-radius: 50%;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.65), transparent 72%),
+    url("../assets/orbit-earth-hero.png") 39% 46% / 780px auto no-repeat;
+  box-shadow: 0 0 55px rgba(233, 233, 226, 0.16);
+  animation: boot-breathe 3.2s ease-in-out infinite alternate;
+}
+.boot-orbit-satellite {
+  position: absolute;
+  top: 49%;
+  left: 11%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f8f8f4;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.68);
+  transform-origin: 160px 0;
+  animation: boot-revolve 6s linear infinite;
+}
+.boot-readout {
+  position: absolute;
+  bottom: clamp(48px, 10vh, 110px);
+  left: 50%;
+  width: min(440px, calc(100% - 40px));
+  transform: translateX(-50%);
+  text-align: center;
+}
+.boot-kicker {
+  margin: 0 0 11px;
+  color: #d1d1ca;
+  font:
+    12px/1.2 Georgia,
+    serif;
+  letter-spacing: 0.22em;
+}
+.boot-readout h2 {
+  margin: 0;
+  color: #f7f7f3;
+  font-size: clamp(22px, 3vw, 31px);
+  letter-spacing: -0.04em;
+}
+.boot-readout > p:nth-of-type(2) {
+  min-height: 19px;
+  margin: 14px 0 26px;
+  color: #b6b6b0;
+  font-size: 12px;
+}
+.boot-progress {
+  height: 2px;
+  background: #5d5d59;
+}
+.boot-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: #f7f7f3;
+}
+.boot-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 9px;
+  color: #aaa9a2;
+  font:
+    10px/1.3 Georgia,
+    serif;
+  letter-spacing: 0.08em;
+}
+#skip-boot {
+  margin-top: 23px;
+  padding: 7px 3px;
+  border: 0;
+  border-bottom: 1px solid #b6b6b0;
+  background: transparent;
+  color: #e5e5e0;
+  font-size: 12px;
+}
+#skip-boot:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+@keyframes boot-revolve {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes boot-breathe {
+  to {
+    box-shadow: 0 0 75px rgba(233, 233, 226, 0.27);
+  }
+}
+@keyframes scene-enter {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes quiet-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.timer-stage.is-running::before {
+  border-style: dashed;
+  animation: quiet-orbit 28s linear infinite;
+}
+
+@media (max-width: 520px) {
+  .boot-topline > span:last-child {
+    display: none;
+  }
+  .boot-orbit {
+    width: min(72vw, 350px);
+    margin-top: -13vh;
+  }
+  .boot-orbit-core {
+    background-size: 640px auto;
+  }
+  .boot-orbit-satellite {
+    transform-origin: 105px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-screen,
+  .boot-orbit-core,
+  .boot-orbit-satellite,
+  .timer-stage.is-running::before,
+  .view {
+    animation: none;
+    transition-duration: 0.01ms;
+  }
+}

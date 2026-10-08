@@ -1,7 +1,7 @@
 // Shared state, default data, and domain helpers.
 
 const STORAGE_KEY = "plantool-v1";
-const colors = ["#71dce1", "#a99bec", "#f9c779", "#74b9ee", "#f59d82"];
+const colors = ["#f0efea", "#aaa9a2", "#b8a78e", "#787873", "#d3d2cc"];
 
 const uid = () =>
   `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;

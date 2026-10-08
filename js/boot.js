@@ -7,7 +7,7 @@
   const reduceMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
-  const duration = 1700;
+  const duration = 2800;
   let finished = false;
 
   function finish() {
@@ -17,7 +17,7 @@
     if (document.activeElement?.id === "skip-boot") {
       document.querySelector(".brand")?.focus();
     }
-    window.setTimeout(() => screen.remove(), reduceMotion ? 0 : 500);
+    window.setTimeout(() => screen.remove(), reduceMotion ? 0 : 460);
   }
 
   document.querySelector("#skip-boot").addEventListener("click", finish);
@@ -26,7 +26,7 @@
     return;
   }
 
-  window.setTimeout(finish, 3600);
+  window.setTimeout(finish, 4700);
   const startedAt = performance.now();
   let phase = -1;
   function advance(now) {
@@ -40,9 +40,9 @@
     if (nextPhase !== phase) {
       phase = nextPhase;
       status.textContent = [
-        "连接本地任务档案…",
-        "校准专注计时与航线…",
-        "任务控制台已就绪",
+        "正在连接本地任务档案…",
+        "正在校准任务航线…",
+        "控制中心已就绪",
       ][phase];
     }
     if (ratio < 1) requestAnimationFrame(advance);

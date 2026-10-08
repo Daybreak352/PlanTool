@@ -22,14 +22,19 @@ function renderHome() {
     ? Math.round((mastered / points.length) * 100)
     : 0;
   document.querySelector("#home-metrics").innerHTML = [
-    ["累计专注", minutesText(focusMinutes), "已记录的专注时间"],
-    ["今日完成", todayDone, "今日完成事项"],
-    ["知识树", state.trees.length, "已创建的学习主题"],
-    ["整体掌握", `${percentage}%`, `${mastered} / ${points.length} 个知识点`],
+    ["累计专注", "Total Focus", minutesText(focusMinutes), "已记录的专注时间"],
+    ["今日完成", "Completed Today", todayDone, "今日完成事项"],
+    ["知识树", "Knowledge Tree", state.trees.length, "已创建的学习主题"],
+    [
+      "整体掌握",
+      "Mastery",
+      `${percentage}%`,
+      `${mastered} / ${points.length} 个知识点`,
+    ],
   ]
     .map(
-      ([label, value, note]) =>
-        `<article class="panel metric-card"><div class="metric-label">${label}</div><div class="metric-value">${value}</div><div class="metric-note">${note}</div></article>`,
+      ([label, translation, value, note]) =>
+        `<article class="metric-card"><div class="metric-label"><strong>${label}</strong><small>${translation}</small></div><div class="metric-value">${value}</div><div class="metric-note">${note}</div></article>`,
     )
     .join("");
   const dailyItems = state.dailyTasks.map((task) => ({
@@ -118,18 +123,18 @@ function selectedPoint() {
   return point ? { tree, point } : null;
 }
 function renderFocus() {
-  document
-    .querySelectorAll(".mode-button")
-    .forEach((button) =>
-      button.classList.toggle("active", button.dataset.focusMode === focusMode),
-    );
+  document.querySelectorAll(".mode-button").forEach((button) => {
+    const selected = button.dataset.focusMode === focusMode;
+    button.classList.toggle("active", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
   const target = document.querySelector("#focus-target");
   if (focusMode === "tree") {
     const tree = getTree();
     const selected = selectedPoint();
     target.innerHTML = !tree
       ? `<p class="empty">先创建或导入知识树，再选择知识点开始专注。</p>`
-      : `<div class="target-fields"><select id="focus-tree">${state.trees.map((item) => `<option value="${item.id}" ${item.id === tree?.id ? "selected" : ""}>${esc(item.title)}</option>`).join("")}</select><select id="focus-section">${tree.modules.flatMap((module) => module.sections.map((section) => `<option value="${section.id}">${esc(section.title)}</option>`)).join("")}</select><select id="focus-point">${
+      : `<div class="target-fields"><select id="focus-tree" aria-label="知识树">${state.trees.map((item) => `<option value="${item.id}" ${item.id === tree?.id ? "selected" : ""}>${esc(item.title)}</option>`).join("")}</select><select id="focus-section" aria-label="章节">${tree.modules.flatMap((module) => module.sections.map((section) => `<option value="${section.id}">${esc(section.title)}</option>`)).join("")}</select><select id="focus-point" aria-label="知识点">${
           tree
             ? allPoints(tree)
                 .map(
@@ -140,7 +145,7 @@ function renderFocus() {
             : "<option>暂无知识点</option>"
         }</select></div>`;
   } else {
-    target.innerHTML = `<div class="custom-target"><input id="custom-focus-title" maxlength="50" placeholder="例如：阅读、绘画、运动" /><select id="custom-focus-category"><option>学习</option><option>运动</option><option>绘画</option><option>阅读</option><option>其他</option></select></div>`;
+    target.innerHTML = `<div class="custom-target"><input id="custom-focus-title" aria-label="自定义专注名称" maxlength="50" placeholder="例如：阅读、绘画、运动" /><select id="custom-focus-category" aria-label="专注类别"><option>学习</option><option>运动</option><option>绘画</option><option>阅读</option><option>其他</option></select></div>`;
   }
   document.querySelector("#focus-minutes").value = state.timerSettings.focus;
   document.querySelector("#break-minutes").value = state.timerSettings.break;
@@ -149,6 +154,9 @@ function renderFocus() {
 }
 function updateTimerDisplay() {
   const seconds = Math.max(timer.secondsLeft, 0);
+  document
+    .querySelector(".timer-stage")
+    .classList.toggle("is-running", timer.running);
   document.querySelector("#timer-display").textContent =
     `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
   document.querySelector("#timer-phase").textContent =
@@ -166,8 +174,8 @@ function updateTimerDisplay() {
       ? "继续专注 <b>→</b>"
       : "开始专注 <b>→</b>";
   document.title = timer.running
-    ? `${document.querySelector("#timer-display").textContent} · UEG PlanTool`
-    : "UEG · PlanTool 行星任务控制台";
+    ? `${document.querySelector("#timer-display").textContent} · UEG 专注`
+    : "地球发动机控制中心 · UEG";
 }
 
 function renderMemos() {
@@ -205,7 +213,7 @@ function renderDaily() {
     ? state.dailyTasks
         .map((task) => {
           const done = task.completedDates.includes(today);
-          return `<div class="daily-task-item ${done ? "done" : ""}"><input class="check" type="checkbox" ${done ? "checked" : ""} data-daily-toggle="${task.id}" /><strong>${esc(task.title)}</strong>${done ? "<small>已打卡</small>" : ""}<button class="delete-icon" data-daily-delete="${task.id}" aria-label="删除任务">×</button></div>`;
+          return `<div class="daily-task-item ${done ? "done" : ""}"><input class="check" type="checkbox" aria-label="完成任务：${esc(task.title)}" ${done ? "checked" : ""} data-daily-toggle="${task.id}" /><strong>${esc(task.title)}</strong>${done ? "<small>已打卡</small>" : ""}<button class="delete-icon" data-daily-delete="${task.id}" aria-label="删除任务">×</button></div>`;
         })
         .join("")
     : `<p class="empty">添加一个每天都想坚持的小习惯。</p>`;
@@ -361,7 +369,7 @@ function renderLibrary() {
   document.querySelector("#library-list").innerHTML = libraryItems
     .map(
       (item, index) =>
-        `<article class="panel library-card"><span class="library-icon">${item.icon}</span><h3>${item.title}</h3><p>${item.description}</p><button class="ghost-button" data-library-import="${index}">导入知识树 →</button></article>`,
+        `<article class="panel library-card"><span class="library-icon" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span><h3>${item.title}</h3><p>${item.description}</p><button class="ghost-button" data-library-import="${index}">导入知识树 →</button></article>`,
     )
     .join("");
 }

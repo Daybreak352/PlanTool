@@ -3,25 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#050b14" />
+    <meta name="theme-color" content="#171717" />
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101b2b'/%3E%3Cpath d='M8 23V14M15 23V9M22 23V5' stroke='%2363d7cf' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23171717'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23f1f1ee' stroke-width='2'/%3E%3Cellipse cx='16' cy='16' rx='14' ry='5' fill='none' stroke='%23f1f1ee' stroke-width='1' transform='rotate(-25 16 16)'/%3E%3C/svg%3E"
     />
-    <title>UEG · PlanTool 行星任务控制台</title>
+    <title>地球发动机控制中心 · UEG</title>
     <link rel="stylesheet" href="styles/base.css" />
     <link rel="stylesheet" href="styles/layout.css" />
     <link rel="stylesheet" href="styles/pages.css" />
     <link rel="stylesheet" href="styles/responsive.css" />
-    <link rel="stylesheet" href="styles/theme-scifi.css" />
-    <link rel="stylesheet" href="styles/space-scene.css" />
+    <link rel="stylesheet" href="styles/theme-engine.css" />
+    <link rel="stylesheet" href="styles/engine-motion.css" />
   </head>
   <body>
     <div class="boot-screen" id="boot-screen" role="status" aria-live="polite">
       <div class="boot-topline">
         <span class="ueg-emblem" aria-hidden="true"><i></i></span>
         <strong>UEG</strong>
-        <span>PLANETARY OPERATIONS NETWORK</span>
+        <span>EARTH ENGINE CONTROL / SYSTEM ONLINE</span>
       </div>
       <div class="boot-orbit" aria-hidden="true">
         <span class="boot-orbit-ring ring-one"></span>
@@ -31,36 +31,16 @@
       </div>
       <div class="boot-readout">
         <p class="boot-kicker">UEG / EYES ON EARTH</p>
-        <h2>正在建立地球航线</h2>
-        <p id="boot-status">连接本地任务档案…</p>
+        <h2>地球发动机控制中心</h2>
+        <p id="boot-status">正在连接本地任务档案…</p>
         <div class="boot-progress" aria-hidden="true">
           <span id="boot-progress"></span>
         </div>
         <div class="boot-progress-meta" aria-hidden="true">
-          <span>LOCAL SYSTEM INITIALIZATION</span
+          <span>PLANETARY SYSTEM INITIALIZATION</span
           ><span id="boot-percent">00%</span>
         </div>
         <button id="skip-boot" type="button">跳过启动动画 →</button>
-      </div>
-    </div>
-    <div class="space-backdrop" aria-hidden="true">
-      <div class="starfield starfield-far"></div>
-      <div class="starfield starfield-near"></div>
-      <div class="flight-trail"></div>
-      <div class="planet-system">
-        <div class="planet-orbit orbit-outer"></div>
-        <div class="planet-orbit orbit-inner"></div>
-        <div class="earth-disc">
-          <div class="earth-map"></div>
-          <div class="earth-clouds"></div>
-          <div class="earth-light"></div>
-        </div>
-        <span class="engine-flare flare-one"></span>
-        <span class="engine-flare flare-two"></span>
-        <span class="engine-flare flare-three"></span>
-        <div class="planet-telemetry">
-          <span>UEG · SOL III</span><span>航线状态 / 稳定</span>
-        </div>
       </div>
     </div>
     <div class="app-shell">
@@ -69,28 +49,38 @@
           class="brand"
           href="#home"
           data-nav="home"
-          aria-label="PlanTool 首页"
+          aria-label="地球发动机控制中心首页"
         >
-          <span class="brand-mark" aria-hidden="true"
-            ><i></i><i></i><i></i
-          ></span>
+          <span class="brand-mark" aria-hidden="true"><i></i></span>
           <span class="brand-copy"
-            ><strong>UEG<span> / PlanTool</span></strong
-            ><small>行星任务控制台</small></span
+            ><strong>地球发动机控制中心</strong
+            ><small>UEG / PLANETARY OPERATIONS</small></span
           >
         </a>
-        <p class="sidebar-caption">任务模块 / MODULES</p>
         <nav class="main-nav" aria-label="主导航">
-          <button class="nav-item active" data-nav="home">总览</button>
-          <button class="nav-item" data-nav="tree">知识树</button>
-          <button class="nav-item" data-nav="focus">专注</button>
-          <button class="nav-item" data-nav="daily">每日任务</button>
-          <button class="nav-item" data-nav="project">项目</button>
-          <button class="nav-item" data-nav="stats">统计</button>
-          <button class="nav-item" data-nav="library">知识库</button>
+          <button class="nav-item active" data-nav="home">
+            <span>总览</span><small>Overview</small>
+          </button>
+          <button class="nav-item" data-nav="tree">
+            <span>知识树</span><small>Tree</small>
+          </button>
+          <button class="nav-item" data-nav="focus">
+            <span>专注</span><small>Focus</small>
+          </button>
+          <button class="nav-item" data-nav="daily">
+            <span>每日任务</span><small>Daily</small>
+          </button>
+          <button class="nav-item" data-nav="project">
+            <span>项目</span><small>Projects</small>
+          </button>
+          <button class="nav-item" data-nav="stats">
+            <span>统计</span><small>Statistics</small>
+          </button>
+          <button class="nav-item" data-nav="library">
+            <span>知识库</span><small>Library</small>
+          </button>
         </nav>
-        <div class="data-actions">
-          <p class="sidebar-caption">本地档案 / ARCHIVE</p>
+        <div class="data-actions" aria-label="本地档案">
           <button
             class="icon-button"
             id="export-data"
@@ -124,9 +114,6 @@
             <span class="action-icon" aria-hidden="true">×</span
             ><span class="action-label">清除数据</span>
           </button>
-          <p class="sidebar-note">
-            数据仅保存在此浏览器。<br />换设备前请先下载备份。
-          </p>
         </div>
       </header>
 
@@ -135,17 +122,26 @@
           <div class="page-heading home-heading">
             <div>
               <p class="eyebrow">
-                UEG / 今日任务 <span id="today-label"></span>
+                UEG / MISSION CONTROL <span id="today-label"></span>
               </p>
-              <h1>让今天的每一步<br /><span>都有航向。</span></h1>
-              <p class="lede">设定任务坐标，启动专注，记录每一次推进。</p>
-              <p class="home-system-note">
-                <span></span>本地系统运行中 · 数据仅保存在此浏览器
-              </p>
+              <h1>流浪地球<br />时间线</h1>
+              <p class="lede">把今天的每一项行动，写进自己的航线。</p>
             </div>
-            <button class="primary-button" data-nav="focus">
-              <span>启动一段专注</span><b>→</b>
+          </div>
+
+          <div class="mission-timeline" aria-label="地球航行时间线">
+            <div><strong>前太阳时代</strong><span>过去—2039</span></div>
+            <div><strong>刹车时代</strong><span>2039—2065</span></div>
+            <div><strong>逃逸时代</strong><span>2065—2145</span></div>
+            <div><strong>加速时代</strong><span>2145—2645</span></div>
+            <div><strong>减速时代</strong><span>3945—4645</span></div>
+            <div><strong>新太阳时代</strong><span>4645—未来</span></div>
+            <button class="timeline-cta" data-nav="focus">
+              启动一段专注 <span aria-hidden="true">↗</span>
             </button>
+            <p class="home-system-note">
+              <span></span>本地系统运行中 · 数据仅保存在此浏览器
+            </p>
           </div>
 
           <div class="metric-grid" id="home-metrics"></div>
@@ -233,7 +229,7 @@
           </div>
           <div class="focus-layout">
             <article class="panel focus-panel">
-              <div class="mode-switch" role="tablist">
+              <div class="mode-switch" role="group" aria-label="专注模式">
                 <button class="mode-button active" data-focus-mode="tree">
                   知识树专注
                 </button>
@@ -298,12 +294,14 @@
                 <span id="memo-count" class="count-badge"></span>
               </div>
               <form id="memo-form" class="memo-form">
+                <label class="sr-only" for="memo-title">备忘录内容</label>
                 <input
                   id="memo-title"
                   required
                   maxlength="50"
                   placeholder="写下待办事项…"
                 />
+                <label class="sr-only" for="memo-minutes">预计分钟数</label>
                 <input
                   id="memo-minutes"
                   type="number"
@@ -311,7 +309,13 @@
                   max="600"
                   placeholder="分钟（可选）"
                 />
-                <button class="round-button" type="submit">+</button>
+                <button
+                  class="round-button"
+                  type="submit"
+                  aria-label="添加备忘录"
+                >
+                  +
+                </button>
               </form>
               <div class="filter-row">
                 <button class="filter-button active" data-memo-filter="open">
@@ -343,6 +347,7 @@
                 <span id="daily-progress-text" class="subtle-stat"></span>
               </div>
               <form id="daily-form" class="add-row">
+                <label class="sr-only" for="daily-title">每日任务名称</label>
                 <input
                   id="daily-title"
                   required
@@ -361,9 +366,9 @@
                   <h2>本月打卡</h2>
                 </div>
                 <div class="month-controls">
-                  <button id="daily-prev-month">‹</button
+                  <button id="daily-prev-month" aria-label="上个月">‹</button
                   ><span id="daily-month-title"></span
-                  ><button id="daily-next-month">›</button>
+                  ><button id="daily-next-month" aria-label="下个月">›</button>
                 </div>
               </div>
               <div id="daily-calendar" class="calendar-grid"></div>
@@ -435,9 +440,9 @@
                 <h2>月度总览</h2>
               </div>
               <div class="month-controls">
-                <button id="stats-prev-month">‹</button
+                <button id="stats-prev-month" aria-label="上个月">‹</button
                 ><span id="stats-month-title"></span
-                ><button id="stats-next-month">›</button>
+                ><button id="stats-next-month" aria-label="下个月">›</button>
               </div>
             </div>
             <div id="stats-calendar" class="calendar-grid stats-calendar"></div>

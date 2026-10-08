@@ -15,6 +15,27 @@ function syncNavigation() {
   }
 }
 
+const viewNames = new Set([
+  "home",
+  "tree",
+  "focus",
+  "daily",
+  "project",
+  "stats",
+  "library",
+]);
+
+function showView(viewName) {
+  if (!viewNames.has(viewName)) return;
+  activeView = viewName;
+  document
+    .querySelectorAll(".view")
+    .forEach((view) =>
+      view.classList.toggle("active", view.dataset.view === activeView),
+    );
+  syncNavigation();
+}
+
 document.addEventListener("click", (event) => {
   const target = event.target.closest(
     "button, [data-nav], [data-home-memo], [data-memo-toggle], [data-daily-toggle], [data-stage-toggle], [data-node-action]",
@@ -22,13 +43,7 @@ document.addEventListener("click", (event) => {
   if (!target) return;
   if (target.dataset.nav) {
     if (target.tagName === "A") event.preventDefault();
-    activeView = target.dataset.nav;
-    document
-      .querySelectorAll(".view")
-      .forEach((view) =>
-        view.classList.toggle("active", view.dataset.view === activeView),
-      );
-    syncNavigation();
+    showView(target.dataset.nav);
     window.location.hash = activeView;
     return;
   }
@@ -318,17 +333,9 @@ document.querySelector("#clear-data").addEventListener("click", () => {
 });
 
 const hash = window.location.hash.replace("#", "");
-if (
-  ["home", "tree", "focus", "daily", "project", "stats", "library"].includes(
-    hash,
-  )
-) {
-  activeView = hash;
-  document
-    .querySelectorAll(".view")
-    .forEach((view) =>
-      view.classList.toggle("active", view.dataset.view === activeView),
-    );
-}
-syncNavigation();
+showView(viewNames.has(hash) ? hash : activeView);
 renderAll();
+
+window.addEventListener("hashchange", () =>
+  showView(window.location.hash.slice(1)),
+);
