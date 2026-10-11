@@ -646,16 +646,21 @@ select {
 }
 
 /* Focus: the supplied engine diagram becomes a useful timer workspace. */
-#focus-view {
+#focus-view.view {
   isolation: isolate;
   overflow: hidden;
+  max-width: none;
+  padding-inline: max(
+    clamp(24px, 3.6vw, 64px),
+    calc((100% - 1680px) / 2 + 64px)
+  );
 }
 #focus-view::before {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: 118px 0 0;
-  background: url("../assets/engine-geometry.svg") center / cover no-repeat;
+  inset: 0;
+  background: url("../assets/engine-geometry.svg") center top / cover no-repeat;
   opacity: 0.8;
   pointer-events: none;
 }
@@ -1127,6 +1132,19 @@ select {
 @media (max-width: 760px) {
   .view:not(#home-view) {
     padding: 28px 18px 60px;
+  }
+  #focus-view.view {
+    padding-inline: 18px;
+  }
+  #focus-view::before {
+    background-image:
+      linear-gradient(
+        to bottom,
+        #e8e8e5 0,
+        rgba(232, 232, 229, 0.96) 130px,
+        transparent 230px
+      ),
+      url("../assets/engine-geometry.svg");
   }
   .page-heading,
   .page-heading.compact {
