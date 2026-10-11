@@ -61,9 +61,6 @@
           <button class="nav-item active" data-nav="home">
             <span>总览</span><small>Overview</small>
           </button>
-          <button class="nav-item" data-nav="tree">
-            <span>知识树</span><small>Tree</small>
-          </button>
           <button class="nav-item" data-nav="focus">
             <span>专注</span><small>Focus</small>
           </button>
@@ -75,9 +72,6 @@
           </button>
           <button class="nav-item" data-nav="stats">
             <span>统计</span><small>Statistics</small>
-          </button>
-          <button class="nav-item" data-nav="library">
-            <span>知识库</span><small>Library</small>
           </button>
         </nav>
         <div class="data-actions" aria-label="本地档案">
@@ -170,55 +164,6 @@
           </div>
         </section>
 
-        <section class="view" id="tree-view" data-view="tree">
-          <div class="page-heading compact">
-            <div>
-              <p class="eyebrow">学习结构</p>
-              <h1>知识树</h1>
-              <p class="lede">
-                搭建你的学习坐标，每一次专注都会沉淀在对应节点。
-              </p>
-            </div>
-            <button class="primary-button" id="new-tree">
-              新建知识树 <b>+</b>
-            </button>
-          </div>
-          <div class="tree-progress panel" id="tree-progress"></div>
-          <div class="tree-layout">
-            <aside class="panel tree-sidebar">
-              <div class="sidebar-title">
-                <span>我的知识树</span
-                ><button
-                  class="round-button"
-                  id="new-tree-small"
-                  aria-label="新建知识树"
-                >
-                  +
-                </button>
-              </div>
-              <div id="tree-list" class="tree-list"></div>
-            </aside>
-            <section class="panel tree-workspace">
-              <div class="tree-workspace-heading">
-                <div>
-                  <p class="eyebrow">当前主题</p>
-                  <h2 id="current-tree-title"></h2>
-                </div>
-                <div class="inline-actions">
-                  <button class="ghost-button" id="rename-tree">重命名</button
-                  ><button class="ghost-button danger-text" id="delete-tree">
-                    删除
-                  </button>
-                </div>
-              </div>
-              <div id="tree-nodes" class="tree-nodes"></div>
-              <button class="dashed-button" id="add-knowledge-point">
-                + 添加知识点
-              </button>
-            </section>
-          </div>
-        </section>
-
         <section class="view" id="focus-view" data-view="focus">
           <div class="page-heading compact">
             <div>
@@ -229,14 +174,9 @@
           </div>
           <div class="focus-layout">
             <article class="panel focus-panel">
-              <div class="mode-switch" role="group" aria-label="专注模式">
-                <button class="mode-button active" data-focus-mode="tree">
-                  知识树专注
-                </button>
-                <button class="mode-button" data-focus-mode="custom">
-                  自定义专注
-                </button>
-              </div>
+              <p class="focus-work-label">
+                本次专注 <span>FOCUS SESSION</span>
+              </p>
               <div id="focus-target" class="focus-target"></div>
               <div class="timer-stage">
                 <p id="timer-phase" class="timer-phase">准备开始</p>
@@ -423,13 +363,6 @@
                   <h2>时长排行榜</h2>
                 </div>
               </div>
-              <div class="ranking-tabs">
-                <button class="filter-button active" data-ranking="category">
-                  分类总榜</button
-                ><button class="filter-button" data-ranking="subject">
-                  学科专注
-                </button>
-              </div>
               <div id="ranking-list" class="ranking-list"></div>
             </article>
           </div>
@@ -448,17 +381,6 @@
             <div id="stats-calendar" class="calendar-grid stats-calendar"></div>
             <div id="selected-day-details" class="day-details"></div>
           </article>
-        </section>
-
-        <section class="view" id="library-view" data-view="library">
-          <div class="page-heading compact">
-            <div>
-              <p class="eyebrow">学科模板</p>
-              <h1>科学总库</h1>
-              <p class="lede">只阅读、可导入，不会产生学习记录。</p>
-            </div>
-          </div>
-          <div id="library-list" class="library-grid"></div>
         </section>
       </main>
     </div>

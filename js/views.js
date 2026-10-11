@@ -2,35 +2,26 @@
 
 function renderAll() {
   renderHome();
-  renderTree();
   renderFocus();
   renderMemos();
   renderDaily();
   renderProjects();
   renderStats();
-  renderLibrary();
 }
 
 function renderHome() {
   document.querySelector("#today-label").textContent =
     prettyDate().toUpperCase();
-  const points = state.trees.flatMap(allPoints);
-  const mastered = points.filter((point) => point.mastered).length;
   const todayDone = todayRecords().length;
   const focusMinutes = allFocusMinutes();
-  const percentage = points.length
-    ? Math.round((mastered / points.length) * 100)
-    : 0;
+  const pending =
+    state.dailyTasks.filter((task) => !task.completedDates.includes(dateKey()))
+      .length + state.memos.filter((memo) => !memo.done).length;
   document.querySelector("#home-metrics").innerHTML = [
     ["累计专注", "Total Focus", minutesText(focusMinutes), "已记录的专注时间"],
     ["今日完成", "Completed Today", todayDone, "今日完成事项"],
-    ["知识树", "Knowledge Tree", state.trees.length, "已创建的学习主题"],
-    [
-      "整体掌握",
-      "Mastery",
-      `${percentage}%`,
-      `${mastered} / ${points.length} 个知识点`,
-    ],
+    ["待办事项", "Pending", pending, "任务与备忘录"],
+    ["项目", "Projects", state.projects.length, "正在规划的目标"],
   ]
     .map(
       ([label, translation, value, note]) =>
@@ -69,84 +60,10 @@ function renderHome() {
     : `<p class="empty">暂无未完成备忘录。</p>`;
 }
 
-function renderTree() {
-  if (!state.trees.some((tree) => tree.id === state.selectedTreeId))
-    state.selectedTreeId = state.trees[0]?.id;
-  const all = state.trees.flatMap(allPoints);
-  const mastered = all.filter((point) => point.mastered).length;
-  const percent = all.length ? Math.round((mastered / all.length) * 100) : 0;
-  document.querySelector("#tree-progress").innerHTML =
-    `<strong>全局掌握进度</strong><div class="progress-line"><i style="width:${percent}%"></i></div><small>${mastered} / ${all.length} · ${percent}%</small>`;
-  document.querySelector("#tree-list").innerHTML =
-    state.trees
-      .map(
-        (tree) =>
-          `<button class="tree-list-item ${tree.id === state.selectedTreeId ? "active" : ""}" data-tree-select="${tree.id}"><span class="tree-list-icon">⌘</span><span>${esc(tree.title)}</span><small>${allPoints(tree).filter((point) => point.mastered).length}/${allPoints(tree).length}</small></button>`,
-      )
-      .join("") || `<p class="empty">还没有知识树。</p>`;
-  const tree = getTree();
-  for (const id of ["#rename-tree", "#delete-tree", "#add-knowledge-point"])
-    document.querySelector(id).disabled = !tree;
-  if (!tree) {
-    document.querySelector("#current-tree-title").textContent =
-      "尚未创建知识树";
-    document.querySelector("#tree-nodes").innerHTML =
-      `<p class="empty">新建或导入知识树后，在这里管理知识点。</p>`;
-    return;
-  }
-  document.querySelector("#current-tree-title").textContent = tree.title;
-  document.querySelector("#tree-nodes").innerHTML =
-    tree.modules
-      .map((module) => {
-        const moduleMinutes = module.sections
-          .flatMap((section) => section.points)
-          .reduce((sum, point) => sum + point.minutes, 0);
-        return `<div class="knowledge-module">
-      <div class="node-row level-1"><span>⌄</span><span>${esc(module.title)}</span><span class="node-time">${minutesText(moduleMinutes)}</span><span class="node-actions"><button class="mini-action" title="添加章节" data-node-action="add-section" data-module="${module.id}">+</button><button class="mini-action" title="重命名" data-node-action="rename-module" data-module="${module.id}">✎</button><button class="mini-action" title="删除" data-node-action="delete-module" data-module="${module.id}">×</button></span></div>
-      ${module.sections
-        .map(
-          (
-            section,
-          ) => `<div class="node-row level-2"><span>└</span><span>${esc(section.title)}</span><span class="node-time">${minutesText(section.points.reduce((sum, point) => sum + point.minutes, 0))}</span><span class="node-actions"><button class="mini-action" title="添加知识点" data-node-action="add-point" data-module="${module.id}" data-section="${section.id}">+</button><button class="mini-action" title="重命名" data-node-action="rename-section" data-module="${module.id}" data-section="${section.id}">✎</button><button class="mini-action" title="删除" data-node-action="delete-section" data-module="${module.id}" data-section="${section.id}">×</button></span></div>
-        ${section.points.map((point) => `<div class="node-row level-3"><input class="check" type="checkbox" ${point.mastered ? "checked" : ""} data-node-action="toggle-point" data-module="${module.id}" data-section="${section.id}" data-point="${point.id}" /><span>${esc(point.title)}</span>${point.mastered ? '<span class="mastered">已掌握</span>' : ""}<span class="node-time">${minutesText(point.minutes)}</span><span class="node-actions"><button class="mini-action" title="重命名" data-node-action="rename-point" data-module="${module.id}" data-section="${section.id}" data-point="${point.id}">✎</button><button class="mini-action" title="删除" data-node-action="delete-point" data-module="${module.id}" data-section="${section.id}" data-point="${point.id}">×</button></span></div>`).join("")}`,
-        )
-        .join("")}
-    </div>`;
-      })
-      .join("") || `<p class="empty">还没有模块，先添加一个知识点吧。</p>`;
-}
-
-function selectedPoint() {
-  const tree = getTree();
-  if (!tree) return null;
-  const point = allPoints(tree)[0];
-  return point ? { tree, point } : null;
-}
 function renderFocus() {
-  document.querySelectorAll(".mode-button").forEach((button) => {
-    const selected = button.dataset.focusMode === focusMode;
-    button.classList.toggle("active", selected);
-    button.setAttribute("aria-pressed", String(selected));
-  });
   const target = document.querySelector("#focus-target");
-  if (focusMode === "tree") {
-    const tree = getTree();
-    const selected = selectedPoint();
-    target.innerHTML = !tree
-      ? `<p class="empty">先创建或导入知识树，再选择知识点开始专注。</p>`
-      : `<div class="target-fields"><select id="focus-tree" aria-label="知识树">${state.trees.map((item) => `<option value="${item.id}" ${item.id === tree?.id ? "selected" : ""}>${esc(item.title)}</option>`).join("")}</select><select id="focus-section" aria-label="章节">${tree.modules.flatMap((module) => module.sections.map((section) => `<option value="${section.id}">${esc(section.title)}</option>`)).join("")}</select><select id="focus-point" aria-label="知识点">${
-          tree
-            ? allPoints(tree)
-                .map(
-                  (point) =>
-                    `<option value="${point.id}" ${point.id === selected?.point.id ? "selected" : ""}>${esc(point.title)}</option>`,
-                )
-                .join("")
-            : "<option>暂无知识点</option>"
-        }</select></div>`;
-  } else {
-    target.innerHTML = `<div class="custom-target"><input id="custom-focus-title" aria-label="自定义专注名称" maxlength="50" placeholder="例如：阅读、绘画、运动" /><select id="custom-focus-category" aria-label="专注类别"><option>学习</option><option>运动</option><option>绘画</option><option>阅读</option><option>其他</option></select></div>`;
-  }
+  if (!target.firstElementChild)
+    target.innerHTML = `<div class="custom-target"><input id="custom-focus-title" aria-label="专注名称" maxlength="50" placeholder="例如：阅读、绘画、运动" /><select id="custom-focus-category" aria-label="专注类别"><option>学习</option><option>运动</option><option>绘画</option><option>阅读</option><option>其他</option></select></div>`;
   document.querySelector("#focus-minutes").value = state.timerSettings.focus;
   document.querySelector("#break-minutes").value = state.timerSettings.break;
   document.querySelector("#total-rounds").value = state.timerSettings.rounds;
@@ -293,21 +210,7 @@ function renderStats() {
         )
         .join("")
     : `<p class="empty">完成一段有时长的事项后，数据会显示在这里。</p>`;
-  const ranks =
-    rankingMode === "category"
-      ? categoryTotals()
-      : state.trees
-          .map((tree) => ({
-            name: tree.title,
-            minutes: state.records
-              .filter(
-                (record) =>
-                  record.type === "focus" && record.treeId === tree.id,
-              )
-              .reduce((sum, record) => sum + record.minutes, 0),
-          }))
-          .filter((item) => item.minutes)
-          .sort((a, b) => b.minutes - a.minutes);
+  const ranks = categoryTotals();
   const max = ranks[0]?.minutes || 1;
   document.querySelector("#ranking-list").innerHTML = ranks.length
     ? ranks
@@ -318,11 +221,6 @@ function renderStats() {
         )
         .join("")
     : `<p class="empty">专注记录会沉淀为排行榜。</p>`;
-  document
-    .querySelectorAll("[data-ranking]")
-    .forEach((button) =>
-      button.classList.toggle("active", button.dataset.ranking === rankingMode),
-    );
   document.querySelector("#stats-month-title").textContent =
     `${statsCursor.getFullYear()} 年 ${statsCursor.getMonth() + 1} 月`;
   document.querySelector("#stats-calendar").innerHTML = calendarMarkup(
@@ -363,13 +261,4 @@ function calendarMarkup(cursor, getData, clickable) {
     return `<button class="calendar-cell ${level ? `level-${level}` : ""} ${key === dateKey() ? "today" : ""}" ${clickable ? `data-stats-day="${key}"` : ""}><span class="day-number">${day}</span>${detail ? `<span class="cell-detail">${detail}</span>` : ""}</button>`;
   }).join("");
   return heads + empty + cells;
-}
-
-function renderLibrary() {
-  document.querySelector("#library-list").innerHTML = libraryItems
-    .map(
-      (item, index) =>
-        `<article class="panel library-card"><span class="library-icon" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span><h3>${item.title}</h3><p>${item.description}</p><button class="ghost-button" data-library-import="${index}">导入知识树 →</button></article>`,
-    )
-    .join("");
 }

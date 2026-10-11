@@ -15,19 +15,12 @@ function syncNavigation() {
   }
 }
 
-const viewNames = new Set([
-  "home",
-  "tree",
-  "focus",
-  "daily",
-  "project",
-  "stats",
-  "library",
-]);
+const viewNames = new Set(["home", "focus", "daily", "project", "stats"]);
 
 function showView(viewName) {
-  if (!viewNames.has(viewName)) return;
-  activeView = viewName;
+  activeView = viewNames.has(viewName) ? viewName : "home";
+  if (viewName && !viewNames.has(viewName))
+    window.history.replaceState(null, "", "#home");
   document
     .querySelectorAll(".view")
     .forEach((view) =>
@@ -38,7 +31,7 @@ function showView(viewName) {
 
 document.addEventListener("click", (event) => {
   const target = event.target.closest(
-    "button, [data-nav], [data-home-memo], [data-memo-toggle], [data-daily-toggle], [data-stage-toggle], [data-node-action]",
+    "button, [data-nav], [data-home-memo], [data-memo-toggle], [data-daily-toggle], [data-stage-toggle]",
   );
   if (!target) return;
   if (target.dataset.nav) {
@@ -49,17 +42,6 @@ document.addEventListener("click", (event) => {
   }
   if (target.dataset.homeMemo) {
     toggleMemo(target.dataset.homeMemo);
-    return;
-  }
-  if (target.dataset.treeSelect) {
-    state.selectedTreeId = target.dataset.treeSelect;
-    save();
-    renderTree();
-    renderFocus();
-    return;
-  }
-  if (target.dataset.nodeAction) {
-    handleNodeAction(target);
     return;
   }
   if (target.dataset.memoToggle) {
@@ -113,11 +95,6 @@ document.addEventListener("click", (event) => {
     }
     return;
   }
-  if (target.dataset.ranking) {
-    rankingMode = target.dataset.ranking;
-    renderStats();
-    return;
-  }
   if (target.dataset.statsDay) {
     selectedStatsDate = target.dataset.statsDay;
     renderStats();
@@ -132,60 +109,7 @@ document.addEventListener("click", (event) => {
     toast("记录已删除");
     return;
   }
-  if (target.dataset.libraryImport) {
-    importLibrary(Number(target.dataset.libraryImport));
-    return;
-  }
-  if (target.dataset.focusMode) {
-    focusMode = target.dataset.focusMode;
-    renderFocus();
-    return;
-  }
   switch (target.id) {
-    case "new-tree":
-    case "new-tree-small":
-      addTree();
-      break;
-    case "add-knowledge-point": {
-      const tree = getTree();
-      if (!tree.modules.length)
-        tree.modules.push({ id: uid(), title: "基础模块", sections: [] });
-      const module = tree.modules[0];
-      if (!module.sections.length)
-        module.sections.push({ id: uid(), title: "第一章节", points: [] });
-      const title = prompt("知识点名称");
-      if (title?.trim()) {
-        module.sections[0].points.push({
-          id: uid(),
-          title: title.trim(),
-          mastered: false,
-          minutes: 0,
-        });
-        save();
-        renderAll();
-      }
-      break;
-    }
-    case "rename-tree": {
-      const tree = getTree();
-      const title = prompt("知识树名称", tree.title);
-      if (title?.trim()) {
-        tree.title = title.trim();
-        save();
-        renderAll();
-      }
-      break;
-    }
-    case "delete-tree": {
-      const tree = getTree();
-      if (confirm(`删除知识树“${tree.title}”？`)) {
-        state.trees = state.trees.filter((item) => item.id !== tree.id);
-        state.selectedTreeId = state.trees[0]?.id ?? null;
-        save();
-        renderAll();
-      }
-      break;
-    }
     case "timer-start":
       startOrPauseTimer();
       break;
@@ -263,11 +187,6 @@ document.querySelector("#daily-form").addEventListener("submit", (event) => {
   toast("每日任务已添加");
 });
 document.querySelector("#focus-view").addEventListener("change", (event) => {
-  if (event.target.id === "focus-tree") {
-    state.selectedTreeId = event.target.value;
-    save();
-    renderFocus();
-  }
   if (
     ["focus-minutes", "break-minutes", "total-rounds"].includes(
       event.target.id,
@@ -307,8 +226,7 @@ document.querySelector("#import-data").addEventListener("change", (event) => {
   reader.onload = () => {
     try {
       const data = JSON.parse(reader.result);
-      if (!Array.isArray(data.trees) || !Array.isArray(data.records))
-        throw new Error("invalid");
+      if (!Array.isArray(data.records)) throw new Error("invalid");
       if (!confirm("导入会替换当前本地数据，是否继续？")) return;
       state = { ...defaultState(), ...data };
       save();
@@ -333,7 +251,7 @@ document.querySelector("#clear-data").addEventListener("click", () => {
 });
 
 const hash = window.location.hash.replace("#", "");
-showView(viewNames.has(hash) ? hash : activeView);
+showView(hash || activeView);
 renderAll();
 
 window.addEventListener("hashchange", () =>

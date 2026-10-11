@@ -16,15 +16,6 @@ function readTimerSettings() {
   save();
 }
 function startOrPauseTimer() {
-  if (
-    !timer.running &&
-    timer.phase === "focus" &&
-    focusMode === "tree" &&
-    !document.querySelector("#focus-point")?.value
-  ) {
-    toast("请先选择知识点，或切换到自定义专注");
-    return;
-  }
   readTimerSettings();
   if (timer.running) {
     clearInterval(timer.interval);
@@ -43,27 +34,12 @@ function startOrPauseTimer() {
 function finishPhase() {
   if (timer.phase === "focus") {
     const minutes = state.timerSettings.focus;
-    let title = "自定义专注";
-    let category = "学习";
-    let treeId;
-    if (focusMode === "tree") {
-      const tree = getTree(document.querySelector("#focus-tree")?.value);
-      const pointId = document.querySelector("#focus-point")?.value;
-      const point = tree && allPoints(tree).find((item) => item.id === pointId);
-      if (point) {
-        title = point.title;
-        treeId = tree.id;
-        point.minutes += minutes;
-      }
-    } else {
-      title =
-        document.querySelector("#custom-focus-title")?.value.trim() ||
-        "自定义专注";
-      category =
-        document.querySelector("#custom-focus-category")?.value || "其他";
-    }
-    recordCompletion("focus", title, minutes, category, { treeId });
-    state.selectedTreeId = treeId || state.selectedTreeId;
+    const title =
+      document.querySelector("#custom-focus-title")?.value.trim() ||
+      "自定义专注";
+    const category =
+      document.querySelector("#custom-focus-category")?.value || "其他";
+    recordCompletion("focus", title, minutes, category);
     save();
     renderAll();
     toast(`已记录 ${minutes} 分钟专注`);
@@ -95,99 +71,6 @@ function resetTimer() {
     interval: null,
   };
   updateTimerDisplay();
-}
-
-function addTree() {
-  const title = prompt("知识树名称", "新的学习主题");
-  if (!title?.trim()) return;
-  const tree = {
-    id: uid(),
-    title: title.trim(),
-    subject: "自定义",
-    modules: [
-      {
-        id: uid(),
-        title: "基础模块",
-        sections: [
-          {
-            id: uid(),
-            title: "第一章节",
-            points: [
-              { id: uid(), title: "第一个知识点", mastered: false, minutes: 0 },
-            ],
-          },
-        ],
-      },
-    ],
-  };
-  state.trees.push(tree);
-  state.selectedTreeId = tree.id;
-  save();
-  renderAll();
-  toast("知识树已创建");
-}
-function findModule(tree, moduleId) {
-  return tree.modules.find((item) => item.id === moduleId);
-}
-function findSection(tree, moduleId, sectionId) {
-  return findModule(tree, moduleId)?.sections.find(
-    (item) => item.id === sectionId,
-  );
-}
-function handleNodeAction(button) {
-  const tree = getTree();
-  const action = button.dataset.nodeAction;
-  const module = findModule(tree, button.dataset.module);
-  const section = findSection(
-    tree,
-    button.dataset.module,
-    button.dataset.section,
-  );
-  const point = section?.points.find(
-    (item) => item.id === button.dataset.point,
-  );
-  if (action === "toggle-point") point.mastered = button.checked;
-  if (action === "add-section") {
-    const title = prompt("章节名称");
-    if (title?.trim())
-      module.sections.push({ id: uid(), title: title.trim(), points: [] });
-  }
-  if (action === "add-point") {
-    const title = prompt("知识点名称");
-    if (title?.trim())
-      section.points.push({
-        id: uid(),
-        title: title.trim(),
-        mastered: false,
-        minutes: 0,
-      });
-  }
-  if (action === "rename-module") {
-    const title = prompt("模块名称", module.title);
-    if (title?.trim()) module.title = title.trim();
-  }
-  if (action === "rename-section") {
-    const title = prompt("章节名称", section.title);
-    if (title?.trim()) section.title = title.trim();
-  }
-  if (action === "rename-point") {
-    const title = prompt("知识点名称", point.title);
-    if (title?.trim()) point.title = title.trim();
-  }
-  if (
-    action === "delete-module" &&
-    confirm(`删除模块“${module.title}”及其内容？`)
-  )
-    tree.modules = tree.modules.filter((item) => item.id !== module.id);
-  if (
-    action === "delete-section" &&
-    confirm(`删除章节“${section.title}”及其知识点？`)
-  )
-    module.sections = module.sections.filter((item) => item.id !== section.id);
-  if (action === "delete-point" && confirm(`删除知识点“${point.title}”？`))
-    section.points = section.points.filter((item) => item.id !== point.id);
-  save();
-  renderAll();
 }
 
 function toggleMemo(id) {
@@ -253,46 +136,4 @@ function addProject() {
   save();
   renderProjects();
   toast("项目已创建");
-}
-function importLibrary(index) {
-  const item = libraryItems[index];
-  const tree = {
-    id: uid(),
-    title: item.title,
-    subject: item.subject,
-    modules: item.modules.map((moduleTitle) => ({
-      id: uid(),
-      title: moduleTitle,
-      sections: [
-        {
-          id: uid(),
-          title: "基础知识",
-          points: [
-            {
-              id: uid(),
-              title: `${moduleTitle} 核心概念`,
-              mastered: false,
-              minutes: 0,
-            },
-          ],
-        },
-      ],
-    })),
-  };
-  state.trees.push(tree);
-  state.selectedTreeId = tree.id;
-  save();
-  renderAll();
-  activeView = "tree";
-  document
-    .querySelectorAll(".view")
-    .forEach((view) =>
-      view.classList.toggle("active", view.dataset.view === "tree"),
-    );
-  document
-    .querySelectorAll(".nav-item")
-    .forEach((item) =>
-      item.classList.toggle("active", item.dataset.nav === "tree"),
-    );
-  toast(`已导入「${item.title}」`);
 }

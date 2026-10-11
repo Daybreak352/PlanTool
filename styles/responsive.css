@@ -10,15 +10,8 @@
   .metric-card:nth-child(-n + 2) {
     border-bottom: 1px solid var(--line);
   }
-  .focus-layout,
-  .tree-layout {
+  .focus-layout {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .tree-sidebar {
-    display: block;
-  }
-  .library-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -121,8 +114,7 @@
 }
 
 @media (max-width: 520px) {
-  .metric-grid,
-  .library-grid {
+  .metric-grid {
     grid-template-columns: minmax(0, 1fr);
   }
   .metric-card {
@@ -132,12 +124,6 @@
   }
   .metric-card:last-child {
     border-bottom: 0;
-  }
-  .tree-progress {
-    grid-template-columns: 1fr;
-  }
-  .tree-progress .progress-line {
-    grid-row: 2;
   }
   .focus-panel,
   .memo-manager,
@@ -150,7 +136,6 @@
   .memo-panel {
     padding: 18px;
   }
-  .target-fields,
   .custom-target,
   .donut-wrap {
     grid-template-columns: minmax(0, 1fr);

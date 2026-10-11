@@ -625,7 +625,6 @@ select {
 }
 .memo-form input,
 .add-row input,
-.target-fields select,
 .custom-target input {
   border-color: #9d9d98;
   border-radius: 0;
@@ -644,96 +643,6 @@ select {
   border-radius: 0;
   background: #191919;
   color: #fff;
-}
-
-/* Knowledge tree: a dark index beside a white work sheet. */
-.tree-progress {
-  margin-bottom: 19px;
-  border: 0;
-  background: #262626;
-  color: #f6f6f3;
-}
-.tree-progress small {
-  color: #d1d1cb;
-}
-.tree-progress .progress-line {
-  background: #555550;
-}
-.tree-progress .progress-line i {
-  background: #e9e8e2;
-}
-.tree-layout {
-  grid-template-columns: minmax(220px, 0.29fr) minmax(0, 1fr);
-  gap: 20px;
-}
-.tree-sidebar {
-  padding: 22px;
-  border: 0;
-  background: #262626;
-  color: #f6f6f3;
-}
-.tree-sidebar .sidebar-title {
-  font-size: 13px;
-  letter-spacing: 0.03em;
-}
-.tree-sidebar .round-button {
-  width: 34px;
-  height: 34px;
-  border-color: #a6a6a0;
-  background: transparent;
-  color: #fff;
-}
-.tree-list-item {
-  border: 1px solid transparent;
-  border-radius: 0;
-  color: #d0d0cb;
-}
-.tree-list-item:hover,
-.tree-list-item.active {
-  border-color: #777770;
-  background: #3a3a39;
-  color: #fff;
-}
-.tree-list-item small {
-  margin-left: auto;
-  color: #a8a8a1;
-}
-.tree-sidebar .empty {
-  color: #c9c9c3;
-}
-.tree-workspace {
-  padding: clamp(22px, 3vw, 38px);
-}
-.tree-workspace-heading {
-  border-color: #babbb5;
-}
-.node-row.level-2,
-.node-row.level-3,
-.node-row .node-time {
-  color: #5b5b57;
-}
-.node-row .mastered,
-.mini-action {
-  border-radius: 0;
-  background: #e7e7e3;
-  color: #30302d;
-}
-.node-row .node-actions {
-  opacity: 1;
-}
-.mini-action:hover {
-  background: #d1d1cb;
-  color: #171717;
-}
-.dashed-button {
-  border-color: #a2a29e;
-  border-radius: 0;
-  background: #f2f2ef;
-  color: #3b3b38;
-}
-.dashed-button:hover {
-  border-color: #222;
-  color: #222;
 }
 
 /* Focus: the supplied engine diagram becomes a useful timer workspace. */
@@ -767,36 +676,28 @@ select {
   border: 0;
   background: rgba(248, 248, 245, 0.77);
 }
-.mode-switch {
+.focus-work-label {
   grid-column: 1;
   grid-row: 1;
   width: 100%;
-  padding: 0;
+  margin: 0;
+  padding: 0 0 12px;
   border-bottom: 1px solid #888884;
-  border-radius: 0;
-  background: transparent;
-}
-.mode-button {
-  flex: 1;
-  min-height: 43px;
-  padding: 7px;
-  border-radius: 0;
-  color: #4d4d49;
-}
-.mode-button.active {
-  border-bottom: 3px solid #202020;
-  background: transparent;
-  box-shadow: none;
+  font-size: 15px;
+  font-weight: 750;
   color: #151515;
+}
+.focus-work-label span {
+  margin-left: 8px;
+  font:
+    11px Georgia,
+    serif;
+  color: #62625d;
 }
 .focus-target {
   grid-column: 1;
   grid-row: 2;
   margin: 0;
-}
-.target-fields {
-  grid-template-columns: 1fr;
-  gap: 8px;
 }
 .custom-target {
   grid-template-columns: 1fr;
@@ -1027,8 +928,7 @@ select {
 .project-list {
   gap: 16px;
 }
-.project-card,
-.library-card {
+.project-card {
   border-top: 4px solid #242424;
   padding: 25px;
 }
@@ -1117,26 +1017,6 @@ select {
   border-radius: 0;
   background: #e5e5e1;
   color: #42423e;
-}
-.library-grid {
-  gap: 17px;
-}
-.library-card {
-  min-height: 228px;
-}
-.library-card .library-icon {
-  width: auto;
-  height: auto;
-  border-radius: 0;
-  background: transparent;
-  color: #8c8c86;
-  font:
-    32px/1 Georgia,
-    serif;
-}
-.library-card button {
-  left: 25px;
-  bottom: 22px;
 }
 
 @media (max-width: 1180px) {
@@ -1262,7 +1142,7 @@ select {
     min-height: 0;
     padding: 22px;
   }
-  .mode-switch,
+  .focus-work-label,
   .focus-target,
   .timer-stage,
   .timer-settings,
@@ -1290,13 +1170,9 @@ select {
   .calendar-panel .calendar-cell {
     min-height: 54px;
   }
-  .tree-layout,
   .stats-grid,
   .project-list {
     grid-template-columns: 1fr;
-  }
-  .tree-sidebar {
-    min-height: 140px;
   }
 }
 
@@ -1319,7 +1195,6 @@ select {
   }
   .memo-form input,
   .add-row input,
-  .target-fields select,
   .custom-target input {
     font-size: 16px;
   }
@@ -1385,9 +1260,7 @@ select {
   .calendar-panel,
   .chart-panel,
   .ranking-panel,
-  .month-panel,
-  .tree-workspace,
-  .tree-sidebar {
+  .month-panel {
     padding: 18px;
   }
   .timer-settings {
@@ -1423,8 +1296,5 @@ select {
   }
   .calendar-panel .cell-detail {
     display: none;
-  }
-  .library-grid {
-    grid-template-columns: 1fr;
   }
 }
