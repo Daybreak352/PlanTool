@@ -99,41 +99,76 @@ function toggleDaily(id, checked) {
   save();
   renderAll();
 }
-function toggleStage(projectId, stageId, checked) {
-  const stage = state.projects
-    .find((project) => project.id === projectId)
-    ?.stages.find((item) => item.id === stageId);
-  if (!stage) return;
-  stage.done = checked;
-  stage.completedAt = checked ? dateKey() : undefined;
-  if (checked) recordCompletion("project", stage.title, 0, "项目");
-  else removeCompletion("project", stage.title);
+function addProject() {
+  const project = {
+    id: uid(),
+    title: "未命名项目",
+    description: "",
+    start: dateKey(),
+    end: "",
+    groups: [],
+  };
+  state.projects.push(project);
+  selectedProjectId = project.id;
+  save();
+  renderAll();
+  document.querySelector("#project-name")?.focus();
+  document.querySelector("#project-name")?.select();
+  toast("项目已创建");
+}
+
+function addProjectItem(kind, parentId, title) {
+  const project = projectById(selectedProjectId);
+  if (!project || !title) return;
+  const item = { id: uid(), title, done: false };
+  if (kind === "group") {
+    projectGroups(project).push({ ...item, tasks: [], sections: [] });
+  } else if (kind === "section") {
+    const group = projectNode(project, "group", parentId);
+    if (!group) return;
+    group.done = false;
+    (group.sections ||= []).push({ ...item, tasks: [] });
+  } else if (kind === "task") {
+    const parent =
+      projectNode(project, "section", parentId) ||
+      projectNode(project, "group", parentId);
+    if (!parent) return;
+    parent.done = false;
+    (parent.tasks ||= []).push(item);
+  } else return;
+  save();
+  renderProjects();
+}
+
+function toggleProjectItem(kind, id, checked) {
+  const project = projectById(selectedProjectId);
+  const item = project && projectNode(project, kind, id);
+  if (!item) return;
+  if (kind === "task") setProjectTaskDone(item, checked);
+  else setHeadingDone(item, checked);
   save();
   renderAll();
 }
-function addStage(projectId) {
-  const project = state.projects.find((item) => item.id === projectId);
-  const title = prompt("阶段名称");
-  if (title?.trim()) {
-    project.stages.push({ id: uid(), title: title.trim(), done: false });
-    save();
-    renderProjects();
+
+function deleteProjectItem(kind, id) {
+  const project = projectById(selectedProjectId);
+  if (!project) return;
+  const prune = (list) => {
+    const index = list.findIndex((item) => item.id === id);
+    if (index >= 0) {
+      list.splice(index, 1);
+      return true;
+    }
+    return false;
+  };
+  if (kind === "group") prune(projectGroups(project));
+  for (const group of projectGroups(project)) {
+    if (kind === "section") prune(group.sections || []);
+    if (kind === "task") {
+      prune(group.tasks || []);
+      for (const section of group.sections || []) prune(section.tasks || []);
+    }
   }
-}
-function addProject() {
-  const title = prompt("项目名称", "新项目");
-  if (!title?.trim()) return;
-  const description = prompt("项目说明（可选）", "");
-  const end = prompt("完成日期（YYYY-MM-DD，可留空）", "");
-  state.projects.push({
-    id: uid(),
-    title: title.trim(),
-    description: description?.trim() || "",
-    start: dateKey(),
-    end: end?.trim() || "",
-    stages: [{ id: uid(), title: "定义第一步", done: false }],
-  });
   save();
-  renderProjects();
-  toast("项目已创建");
+  renderAll();
 }

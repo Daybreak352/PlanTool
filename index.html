@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="styles/responsive.css" />
     <link rel="stylesheet" href="styles/theme-engine.css" />
     <link rel="stylesheet" href="styles/engine-motion.css" />
+    <link rel="stylesheet" href="styles/projects.css" />
   </head>
   <body>
     <div class="boot-screen" id="boot-screen" role="status" aria-live="polite">
@@ -319,15 +320,23 @@
         <section class="view" id="project-view" data-view="project">
           <div class="page-heading compact">
             <div>
-              <p class="eyebrow">阶段目标</p>
+              <p class="eyebrow">任务档案 / MISSION LOG</p>
               <h1>项目进展</h1>
-              <p class="lede">把大目标切成可抵达的下一步。</p>
+              <p class="lede">把每一段航程，拆解为清晰可达的步骤。</p>
             </div>
-            <button class="primary-button" id="new-project">
-              新建项目 <b>+</b>
-            </button>
           </div>
-          <div id="project-list" class="project-list"></div>
+          <div class="project-workspace">
+            <aside class="project-sidebar" aria-label="项目列表">
+              <div class="project-sidebar-heading">
+                <span>项目档案</span><small>PROJECTS</small>
+              </div>
+              <div id="project-list" class="project-list"></div>
+              <button class="project-new" id="new-project" type="button">
+                <span>＋</span> 新建项目
+              </button>
+            </aside>
+            <div id="project-detail" class="project-detail"></div>
+          </div>
         </section>
 
         <section class="view" id="stats-view" data-view="stats">
@@ -386,6 +395,7 @@
     </div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script src="js/core.js"></script>
+    <script src="js/projects.js"></script>
     <script src="js/views.js"></script>
     <script src="js/actions.js"></script>
     <script src="js/app.js"></script>

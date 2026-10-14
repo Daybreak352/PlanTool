@@ -155,17 +155,60 @@ function renderDaily() {
 }
 
 function renderProjects() {
-  const cards = state.projects
-    .map((project) => {
-      const done = project.stages.filter((stage) => stage.done).length;
-      const percent = project.stages.length
-        ? Math.round((done / project.stages.length) * 100)
-        : 0;
-      return `<article class="panel project-card"><div class="project-top"><div><h2 class="project-title">${esc(project.title)}</h2><p class="project-desc">${esc(project.description || "尚未添加项目说明。")}</p></div><button class="delete-icon" data-project-delete="${project.id}" aria-label="删除项目">×</button></div><div class="project-dates">${project.start || "待开始"} — ${project.end || "未设置截止"}</div><div class="project-progress"><div class="progress-line"><i style="width:${percent}%"></i></div><small>${percent}%</small></div><div class="stage-list">${project.stages.map((stage) => `<label class="stage ${stage.done ? "done" : ""}"><input class="check" type="checkbox" ${stage.done ? "checked" : ""} data-stage-toggle="${stage.id}" data-project="${project.id}" /><span>${esc(stage.title)}</span></label>`).join("")}<button class="text-button" data-stage-add="${project.id}">+ 添加阶段</button></div></article>`;
-    })
-    .join("");
-  document.querySelector("#project-list").innerHTML =
-    `${cards}<button class="panel new-project-card" id="new-project-card"><strong>+</strong><span>新建项目</span></button>`;
+  if (!state.projects.some((project) => project.id === selectedProjectId))
+    selectedProjectId = state.projects[0]?.id || null;
+  const selected = projectById(selectedProjectId);
+  document.querySelector("#project-list").innerHTML = state.projects.length
+    ? state.projects
+        .map((project) => {
+          const percent = projectProgress(project);
+          return `<button type="button" class="project-switch ${project.id === selectedProjectId ? "active" : ""}" data-project-select="${project.id}" ${project.id === selectedProjectId ? 'aria-current="true"' : ""}><span>${esc(project.title)}</span><strong>${percent}%</strong></button>`;
+        })
+        .join("")
+    : `<p class="project-sidebar-empty">尚无项目档案。</p>`;
+  document.querySelector("#project-detail").innerHTML = selected
+    ? projectDetailMarkup(selected)
+    : `<div class="project-empty"><span class="project-empty-orbit" aria-hidden="true"></span><p>MISSION 00 / STANDBY</p><h2>从一个项目开始</h2><span>在左侧新建项目，设定航程并拆解任务。</span></div>`;
+  document.querySelectorAll("[data-project-check]").forEach((input) => {
+    const project = projectById(selectedProjectId);
+    const node =
+      project &&
+      projectNode(
+        project,
+        input.dataset.projectKind,
+        input.dataset.projectCheck,
+      );
+    if (node && input.dataset.projectKind !== "task")
+      input.indeterminate = headingState(node).mixed;
+  });
+}
+
+function projectAddForm(kind, parentId, placeholder, label) {
+  return `<form class="project-add-form" data-project-add="${kind}" data-parent="${parentId || ""}"><input name="title" aria-label="${label}" maxlength="120" placeholder="${placeholder}" required /><button type="submit" aria-label="${label}">＋ <span>${label}</span></button></form>`;
+}
+
+function projectCheckMarkup(kind, item) {
+  const done = kind === "task" ? !!item.done : headingState(item).checked;
+  return `<input class="check" type="checkbox" data-project-check="${item.id}" data-project-kind="${kind}" aria-label="${done ? "取消完成" : "标记完成"}：${esc(item.title)}" ${done ? "checked" : ""} />`;
+}
+
+function projectTaskMarkup(task, index) {
+  return `<div class="project-task ${task.done ? "is-done" : ""}"><span class="project-task-index">${String(index + 1).padStart(2, "0")}</span>${projectCheckMarkup("task", task)}<input class="project-item-name" data-project-title="task" data-item-id="${task.id}" aria-label="任务名称" value="${esc(task.title)}" maxlength="120" /><button class="project-remove" type="button" data-project-remove="task" data-item-id="${task.id}" aria-label="删除任务：${esc(task.title)}">×</button></div>`;
+}
+
+function projectSectionMarkup(section, index) {
+  return `<section class="project-section"><div class="project-section-head"><span class="project-order">${String(index + 1).padStart(2, "0")}</span>${projectCheckMarkup("section", section)}<h3><input class="project-item-name" data-project-title="section" data-item-id="${section.id}" aria-label="二级标题" value="${esc(section.title)}" maxlength="120" /></h3><button class="project-remove" type="button" data-project-remove="section" data-item-id="${section.id}" aria-label="删除二级标题：${esc(section.title)}">×</button></div><div class="project-task-list">${(section.tasks || []).map(projectTaskMarkup).join("")}${projectAddForm("task", section.id, "输入任务，回车添加", "添加任务")}</div></section>`;
+}
+
+function projectGroupMarkup(group, index) {
+  return `<section class="project-group"><div class="project-group-head"><span class="project-order">${String(index + 1).padStart(2, "0")}</span>${projectCheckMarkup("group", group)}<h2><input class="project-item-name" data-project-title="group" data-item-id="${group.id}" aria-label="一级标题" value="${esc(group.title)}" maxlength="120" /></h2><button class="project-remove" type="button" data-project-remove="group" data-item-id="${group.id}" aria-label="删除一级标题：${esc(group.title)}">×</button></div><div class="project-group-body">${(group.tasks || []).map(projectTaskMarkup).join("")}${projectAddForm("task", group.id, "输入直属任务", "添加任务")}${(group.sections || []).map(projectSectionMarkup).join("")}${projectAddForm("section", group.id, "添加二级标题", "添加二级标题")}</div></section>`;
+}
+
+function projectDetailMarkup(project) {
+  const percent = projectProgress(project);
+  const tasks = projectTasks(project);
+  const done = tasks.filter((task) => task.done).length;
+  return `<article class="project-sheet"><div class="project-sheet-top"><span>MISSION FILE / ${esc(project.id.slice(-5).toUpperCase())}</span><button type="button" class="project-delete" data-project-delete="${project.id}">删除项目</button></div><div class="project-meta"><label class="project-field project-name-field"><span>项目名称</span><input id="project-name" data-project-field="title" value="${esc(project.title)}" maxlength="120" required /></label><label class="project-field project-description-field"><span>项目简介</span><textarea data-project-field="description" rows="2" placeholder="写下项目的目标与背景…">${esc(project.description || "")}</textarea></label><div class="project-date-row"><label class="project-field"><span>开始时间</span><input type="date" data-project-field="start" value="${esc(project.start || "")}" /></label><span class="project-date-line" aria-hidden="true"></span><label class="project-field"><span>结束时间</span><input type="date" data-project-field="end" value="${esc(project.end || "")}" /></label></div></div><div class="project-summary"><div><span>总进度 / OVERALL PROGRESS</span><strong>${percent}<small>%</small></strong></div><div class="project-summary-track" role="progressbar" aria-label="项目总进度" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100"><i style="width:${percent}%"></i></div><p>${done} / ${tasks.length} 项任务已完成 · 勾选标题可完成或撤销其下全部任务</p></div><div class="project-structure"><div class="project-structure-head"><div><p class="eyebrow">任务结构 / TASK STRUCTURE</p><h2>执行清单</h2></div><span>${String(projectGroups(project).length).padStart(2, "0")} 个一级标题</span></div>${projectGroups(project).length ? projectGroups(project).map(projectGroupMarkup).join("") : `<p class="project-structure-empty">暂无分类。从一个一级标题开始，为项目搭建清晰的任务结构。</p>`}${projectAddForm("group", "", "新增一级标题", "添加一级标题")}</div></article>`;
 }
 
 function recordsForDay(key) {

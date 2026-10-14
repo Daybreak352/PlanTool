@@ -31,7 +31,7 @@ function showView(viewName) {
 
 document.addEventListener("click", (event) => {
   const target = event.target.closest(
-    "button, [data-nav], [data-home-memo], [data-memo-toggle], [data-daily-toggle], [data-stage-toggle]",
+    "button, [data-nav], [data-home-memo], [data-memo-toggle], [data-daily-toggle]",
   );
   if (!target) return;
   if (target.dataset.nav) {
@@ -73,20 +73,25 @@ document.addEventListener("click", (event) => {
     renderAll();
     return;
   }
-  if (target.dataset.stageToggle) {
-    toggleStage(
-      target.dataset.project,
-      target.dataset.stageToggle,
-      target.checked,
-    );
+  if (target.dataset.projectSelect) {
+    selectedProjectId = target.dataset.projectSelect;
+    renderProjects();
     return;
   }
-  if (target.dataset.stageAdd) {
-    addStage(target.dataset.stageAdd);
+  if (target.dataset.projectRemove) {
+    const kind = target.dataset.projectRemove;
+    const label =
+      kind === "task"
+        ? "任务"
+        : kind === "group"
+          ? "一级标题及其全部内容"
+          : "二级标题及其全部任务";
+    if (confirm(`删除这个${label}？`))
+      deleteProjectItem(kind, target.dataset.itemId);
     return;
   }
   if (target.dataset.projectDelete) {
-    if (confirm("删除这个项目？")) {
+    if (confirm("删除这个项目及其全部任务？此操作无法撤销。")) {
       state.projects = state.projects.filter(
         (project) => project.id !== target.dataset.projectDelete,
       );
@@ -150,9 +155,78 @@ document.addEventListener("click", (event) => {
       renderStats();
       break;
     case "new-project":
-    case "new-project-card":
       addProject();
       break;
+  }
+});
+
+document.querySelector("#project-view").addEventListener("submit", (event) => {
+  const form = event.target.closest("[data-project-add]");
+  if (!form) return;
+  event.preventDefault();
+  const title = form.elements.title.value.trim();
+  if (!title) return;
+  addProjectItem(form.dataset.projectAdd, form.dataset.parent, title);
+});
+
+document.querySelector("#project-view").addEventListener("change", (event) => {
+  const input = event.target;
+  if (input.dataset.projectCheck) {
+    toggleProjectItem(
+      input.dataset.projectKind,
+      input.dataset.projectCheck,
+      input.checked,
+    );
+    return;
+  }
+  const project = projectById(selectedProjectId);
+  if (!project) return;
+  if (input.dataset.projectField) {
+    const field = input.dataset.projectField;
+    const value = input.value.trim();
+    if (field === "title" && !value) {
+      input.value = project.title;
+      return;
+    }
+    project[field] = value;
+    input.value = value;
+  } else if (input.dataset.projectTitle) {
+    const node = projectNode(
+      project,
+      input.dataset.projectTitle,
+      input.dataset.itemId,
+    );
+    if (!node) return;
+    const title = input.value.trim();
+    if (!title) {
+      input.value = node.title;
+      return;
+    }
+    node.title = title;
+    input.value = title;
+  } else return;
+  save();
+  // Do not replace the editor on blur: the user's next click may target the sidebar.
+  if (input.dataset.projectField === "title") {
+    const label = document.querySelector(".project-switch.active span");
+    if (label) label.textContent = project.title;
+  }
+  if (input.dataset.projectTitle) {
+    const row = input.closest(
+      ".project-group-head, .project-section-head, .project-task",
+    );
+    const check = row?.querySelector("[data-project-check]");
+    const remove = row?.querySelector("[data-project-remove]");
+    if (check)
+      check.setAttribute(
+        "aria-label",
+        `${check.checked ? "取消完成" : "标记完成"}：${input.value.trim()}`,
+      );
+    if (remove)
+      remove.setAttribute(
+        "aria-label",
+        `删除${input.dataset.projectTitle === "task" ? "任务" : input.dataset.projectTitle === "group" ? "一级标题" : "二级标题"}：${input.value.trim()}`,
+      );
   }
 });
 
