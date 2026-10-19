@@ -817,19 +817,23 @@ select {
   color: #777772;
 }
 
-/* Daily: structural truss on the left, ink-black month matrix on the right. */
-#daily-view {
-  isolation: isolate;
-  overflow: hidden;
-}
-#daily-view::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 130px 48% 0 0;
-  background: url("../assets/truss-field.svg") left top / cover no-repeat;
-  opacity: 0.78;
-  pointer-events: none;
+/* Daily: carry the truss across the full workspace, including its side gutters. */
+main:has(#daily-view.active) {
+  background-image:
+    linear-gradient(
+      to bottom,
+      #e8e8e5 0,
+      rgba(232, 232, 229, 0.96) 110px,
+      rgba(232, 232, 229, 0.22) 250px
+    ),
+    url("../assets/truss-field.svg");
+  background-position:
+    center top,
+    center center;
+  background-size:
+    100% 100%,
+    cover;
+  background-repeat: no-repeat;
 }
 .daily-layout {
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
