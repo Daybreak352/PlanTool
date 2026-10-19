@@ -88,14 +88,10 @@ function toggleDaily(id, checked) {
   const task = state.dailyTasks.find((item) => item.id === id);
   if (!task) return;
   const today = dateKey();
-  if (checked && !task.completedDates.includes(today)) {
-    task.completedDates.push(today);
-    recordCompletion("daily", task.title, 0, "每日任务");
-  }
-  if (!checked) {
-    task.completedDates = task.completedDates.filter((item) => item !== today);
-    removeCompletion("daily", task.title);
-  }
+  if (checked) {
+    addDailyRecord(task.title, today);
+    syncDailyTaskDates(task.title);
+  } else removeDailyRecordsForTitleOnDate(task.title, today);
   save();
   renderAll();
 }

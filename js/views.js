@@ -130,7 +130,7 @@ function renderDaily() {
     ? state.dailyTasks
         .map((task) => {
           const done = task.completedDates.includes(today);
-          return `<div class="daily-task-item ${done ? "done" : ""}"><input class="check" type="checkbox" aria-label="完成任务：${esc(task.title)}" ${done ? "checked" : ""} data-daily-toggle="${task.id}" /><strong>${esc(task.title)}</strong>${done ? "<small>已打卡</small>" : ""}<button class="delete-icon" data-daily-delete="${task.id}" aria-label="删除任务">×</button></div>`;
+          return `<div class="daily-task-item ${done ? "done" : ""}"><input class="check" type="checkbox" aria-label="${done ? "取消完成" : "完成任务"}：${esc(task.title)}" ${done ? "checked" : ""} data-daily-toggle="${task.id}" /><strong>${esc(task.title)}</strong><small>${done ? "今日完成 · " : ""}累计 ${task.completedDates.length} 天</small><button class="delete-icon" data-daily-delete="${task.id}" aria-label="移除任务：${esc(task.title)}">×</button></div>`;
         })
         .join("")
     : `<p class="empty">添加一个每天都想坚持的小习惯。</p>`;
@@ -139,19 +139,49 @@ function renderDaily() {
   document.querySelector("#daily-calendar").innerHTML = calendarMarkup(
     dailyCursor,
     (key) => {
-      const count = state.dailyTasks.filter((task) =>
-        task.completedDates.includes(key),
-      ).length;
-      const ratio = state.dailyTasks.length
-        ? count / state.dailyTasks.length
-        : 0;
+      const count = dailyRecordsForDate(key).length;
       return {
-        level: ratio === 0 ? 0 : ratio < 0.5 ? 1 : ratio < 1 ? 2 : 4,
-        detail: count ? `${count}/${state.dailyTasks.length} 完成` : "",
+        level: count === 0 ? 0 : count === 1 ? 1 : count < 4 ? 2 : 4,
+        detail: count ? `${count} 项记录` : "",
       };
     },
-    false,
+    "daily",
   );
+  renderDailyHistory();
+}
+
+function renderDailyHistory() {
+  const records = dailyRecordsForDate(selectedDailyDate);
+  const future = selectedDailyDate > dateKey();
+  const suggestions = [
+    ...new Set([
+      ...state.dailyTasks.map((task) => task.title),
+      ...state.records
+        .filter((record) => record.type === "daily")
+        .map((record) => record.title),
+    ]),
+  ];
+  document.querySelector("#daily-history").innerHTML = `
+    <div class="daily-history-heading">
+      <div><p class="eyebrow">历史记录 / LOG</p><h3>${selectedDailyDate === dateKey() ? "今天 · " : ""}${selectedDailyDate}</h3></div>
+      <span>${records.length} 项完成</span>
+    </div>
+    <div class="daily-history-list">${
+      records.length
+        ? records
+            .map(
+              (record) =>
+                `<div class="daily-history-item"><span>${esc(record.title)}</span><button type="button" data-daily-record-delete="${record.id}" aria-label="删除 ${selectedDailyDate} 的记录：${esc(record.title)}">删除</button></div>`,
+            )
+            .join("")
+        : `<p class="daily-history-empty">这一天还没有每日任务记录。</p>`
+    }</div>
+    <form id="daily-history-form" class="daily-history-form">
+      <label for="daily-history-title">补录已完成任务</label>
+      <div><input id="daily-history-title" list="daily-history-suggestions" maxlength="50" required placeholder="输入任务名称" ${future ? "disabled" : ""} /><button type="submit" ${future ? "disabled" : ""}>添加记录</button></div>
+      <datalist id="daily-history-suggestions">${suggestions.map((title) => `<option value="${esc(title)}"></option>`).join("")}</datalist>
+      <p>${future ? "未来日期不能补录。" : "任务移出清单后，这里的历史记录仍会保留。"}</p>
+    </form>`;
 }
 
 function renderProjects() {
@@ -277,14 +307,14 @@ function renderStats() {
         detail: mins ? `${mins} 分钟` : "",
       };
     },
-    true,
+    "stats",
   );
   const details = recordsForDay(selectedStatsDate);
   document.querySelector("#selected-day-details").innerHTML =
     `<strong class="detail-heading">${selectedStatsDate === dateKey() ? "今天" : selectedStatsDate} 的完成事项</strong>${details.length ? details.map((record) => `<span class="detail-chip">${esc(record.title)}${record.minutes ? ` · ${record.minutes}m` : ""} <button class="delete-icon" data-record-delete="${record.id}" aria-label="删除记录">×</button></span>`).join("") : `<span class="detail-chip">这一天还没有记录</span>`}`;
 }
 
-function calendarMarkup(cursor, getData, clickable) {
+function calendarMarkup(cursor, getData, clickAction = "") {
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
   const first = new Date(year, month, 1);
@@ -301,7 +331,10 @@ function calendarMarkup(cursor, getData, clickable) {
     const day = index + 1;
     const key = dateKey(new Date(year, month, day));
     const { level, detail } = getData(key);
-    return `<button class="calendar-cell ${level ? `level-${level}` : ""} ${key === dateKey() ? "today" : ""}" ${clickable ? `data-stats-day="${key}"` : ""}><span class="day-number">${day}</span>${detail ? `<span class="cell-detail">${detail}</span>` : ""}</button>`;
+    const selected =
+      key === (clickAction === "daily" ? selectedDailyDate : selectedStatsDate);
+    const disabled = clickAction === "daily" && key > dateKey();
+    return `<button type="button" class="calendar-cell ${level ? `level-${level}` : ""} ${key === dateKey() ? "today" : ""} ${selected ? "selected" : ""}" ${clickAction ? `data-${clickAction}-day="${key}"` : ""} aria-label="${key}，${detail || "无记录"}" ${clickAction ? `aria-pressed="${selected}"` : ""} ${disabled ? "disabled" : ""}><span class="day-number">${day}</span>${detail ? `<span class="cell-detail">${detail}</span>` : ""}</button>`;
   }).join("");
   return heads + empty + cells;
 }

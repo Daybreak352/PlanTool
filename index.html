@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="styles/theme-engine.css" />
     <link rel="stylesheet" href="styles/engine-motion.css" />
     <link rel="stylesheet" href="styles/projects.css" />
+    <link rel="stylesheet" href="styles/daily-history.css" />
   </head>
   <body>
     <div class="boot-screen" id="boot-screen" role="status" aria-live="polite">
@@ -313,6 +314,10 @@
                 </div>
               </div>
               <div id="daily-calendar" class="calendar-grid"></div>
+              <p class="daily-calendar-hint">
+                选择日期查看、补录或删除打卡记录
+              </p>
+              <div id="daily-history" class="daily-history"></div>
             </aside>
           </div>
         </section>
@@ -395,6 +400,7 @@
     </div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script src="js/core.js"></script>
+    <script src="js/daily.js"></script>
     <script src="js/projects.js"></script>
     <script src="js/views.js"></script>
     <script src="js/actions.js"></script>

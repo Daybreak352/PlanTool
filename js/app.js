@@ -31,7 +31,7 @@ function showView(viewName) {
 
 document.addEventListener("click", (event) => {
   const target = event.target.closest(
-    "button, [data-nav], [data-home-memo], [data-memo-toggle], [data-daily-toggle]",
+    "button, [data-nav], [data-home-memo], [data-memo-toggle]",
   );
   if (!target) return;
   if (target.dataset.nav) {
@@ -61,16 +61,27 @@ document.addEventListener("click", (event) => {
     renderMemos();
     return;
   }
-  if (target.dataset.dailyToggle) {
-    toggleDaily(target.dataset.dailyToggle, target.checked);
-    return;
-  }
   if (target.dataset.dailyDelete) {
     state.dailyTasks = state.dailyTasks.filter(
       (task) => task.id !== target.dataset.dailyDelete,
     );
     save();
     renderAll();
+    toast("任务已移出清单，历史记录仍保留");
+    return;
+  }
+  if (target.dataset.dailyDay) {
+    selectedDailyDate = target.dataset.dailyDay;
+    renderDaily();
+    return;
+  }
+  if (target.dataset.dailyRecordDelete) {
+    if (!confirm("删除这条每日任务记录？")) return;
+    if (removeDailyRecord(target.dataset.dailyRecordDelete)) {
+      save();
+      renderAll();
+      toast("历史记录已删除");
+    }
     return;
   }
   if (target.dataset.projectSelect) {
@@ -106,9 +117,14 @@ document.addEventListener("click", (event) => {
     return;
   }
   if (target.dataset.recordDelete) {
-    state.records = state.records.filter(
-      (record) => record.id !== target.dataset.recordDelete,
+    const record = state.records.find(
+      (item) => item.id === target.dataset.recordDelete,
     );
+    if (record?.type === "daily") removeDailyRecord(record.id);
+    else
+      state.records = state.records.filter(
+        (item) => item.id !== target.dataset.recordDelete,
+      );
     save();
     renderAll();
     toast("记录已删除");
@@ -128,6 +144,7 @@ document.addEventListener("click", (event) => {
         dailyCursor.getMonth() - 1,
         1,
       );
+      selectedDailyDate = dateKey(dailyCursor);
       renderDaily();
       break;
     case "daily-next-month":
@@ -136,6 +153,7 @@ document.addEventListener("click", (event) => {
         dailyCursor.getMonth() + 1,
         1,
       );
+      selectedDailyDate = dateKey(dailyCursor);
       renderDaily();
       break;
     case "stats-prev-month":
@@ -249,16 +267,46 @@ document.querySelector("#memo-form").addEventListener("submit", (event) => {
 document.querySelector("#daily-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const input = document.querySelector("#daily-title");
-  if (!input.value.trim()) return;
+  const title = input.value.trim();
+  if (!title) return;
+  if (
+    state.dailyTasks.some(
+      (task) => dailyTitleKey(task.title) === dailyTitleKey(title),
+    )
+  ) {
+    toast("任务已在清单中");
+    return;
+  }
+  const completedDates = dailyDatesForTitle(title);
   state.dailyTasks.push({
     id: uid(),
-    title: input.value.trim(),
-    completedDates: [],
+    title,
+    completedDates,
   });
   input.value = "";
   save();
   renderAll();
-  toast("每日任务已添加");
+  toast(
+    completedDates.length
+      ? `每日任务已添加，继承 ${completedDates.length} 天记录`
+      : "每日任务已添加",
+  );
+});
+document.querySelector("#daily-view").addEventListener("change", (event) => {
+  if (event.target.dataset.dailyToggle)
+    toggleDaily(event.target.dataset.dailyToggle, event.target.checked);
+});
+document.querySelector("#daily-view").addEventListener("submit", (event) => {
+  if (event.target.id !== "daily-history-form") return;
+  event.preventDefault();
+  const title = event.target.querySelector("#daily-history-title").value.trim();
+  if (!title) return;
+  const result = addDailyRecord(title, selectedDailyDate);
+  if (result === "future") return toast("未来日期不能补录");
+  if (result === "duplicate") return toast("这一天已有同名记录");
+  save();
+  renderAll();
+  toast("历史记录已添加");
 });
 document.querySelector("#focus-view").addEventListener("change", (event) => {
   if (
