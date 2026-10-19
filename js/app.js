@@ -40,6 +40,35 @@ document.addEventListener("click", (event) => {
     window.location.hash = activeView;
     return;
   }
+  if (target.hasAttribute("data-period-new")) {
+    periodEditorId = null;
+    renderPeriods();
+    document.querySelector("#period-title").focus();
+    return;
+  }
+  if (target.dataset.periodEdit) {
+    periodEditorId = target.dataset.periodEdit;
+    renderPeriods();
+    document.querySelector("#period-title").focus();
+    return;
+  }
+  if (target.dataset.periodDelete) {
+    const period = state.periods.find(
+      (item) => item.id === target.dataset.periodDelete,
+    );
+    if (!period || !confirm(`删除时期「${period.title}」？`)) return;
+    state.periods = state.periods.filter((item) => item.id !== period.id);
+    if (periodEditorId === period.id) periodEditorId = undefined;
+    save();
+    renderPeriods();
+    toast("时期已删除");
+    return;
+  }
+  if (target.hasAttribute("data-period-cancel")) {
+    periodEditorId = undefined;
+    renderPeriods();
+    return;
+  }
   if (target.dataset.homeMemo) {
     toggleMemo(target.dataset.homeMemo);
     return;
@@ -176,6 +205,55 @@ document.addEventListener("click", (event) => {
       addProject();
       break;
   }
+});
+
+function validatePeriodDates(form) {
+  const start = form.elements.start.value;
+  const end = form.elements.end;
+  const invalid = Boolean(start && end.value && end.value < start);
+  end.setCustomValidity(invalid ? "结束月份不能早于开始月份" : "");
+  form.querySelector(".period-error").hidden = !invalid;
+  return !invalid;
+}
+
+document.querySelector("#home-view").addEventListener("input", (event) => {
+  const form = event.target.closest("#period-form");
+  if (!form) return;
+  if (event.target.name === "title") event.target.setCustomValidity("");
+  validatePeriodDates(form);
+});
+
+document.querySelector("#home-view").addEventListener("submit", (event) => {
+  if (event.target.id !== "period-form") return;
+  event.preventDefault();
+  const form = event.target;
+  const title = form.elements.title.value.trim();
+  if (!title) {
+    form.elements.title.setCustomValidity("请输入时期名称");
+    form.elements.title.reportValidity();
+    return;
+  }
+  if (!validatePeriodDates(form)) {
+    form.elements.end.reportValidity();
+    return;
+  }
+  const period = state.periods.find((item) => item.id === periodEditorId);
+  if (period) {
+    period.title = title;
+    period.start = form.elements.start.value;
+    period.end = form.elements.end.value;
+  } else {
+    state.periods.push({
+      id: uid(),
+      title,
+      start: form.elements.start.value,
+      end: form.elements.end.value,
+    });
+  }
+  periodEditorId = undefined;
+  save();
+  renderPeriods();
+  toast(period ? "时期已更新" : "时期已添加");
 });
 
 document.querySelector("#project-view").addEventListener("submit", (event) => {
@@ -350,7 +428,12 @@ document.querySelector("#import-data").addEventListener("change", (event) => {
       const data = JSON.parse(reader.result);
       if (!Array.isArray(data.records)) throw new Error("invalid");
       if (!confirm("导入会替换当前本地数据，是否继续？")) return;
-      state = { ...defaultState(), ...data };
+      state = {
+        ...defaultState(),
+        ...data,
+        periods: Array.isArray(data.periods) ? data.periods : [],
+      };
+      periodEditorId = undefined;
       save();
       resetTimer();
       renderAll();
@@ -366,6 +449,7 @@ document.querySelector("#clear-data").addEventListener("click", () => {
   if (!confirm("确定清除所有数据并恢复空白初始状态？")) return;
   if (!confirm("此操作无法撤销，确认继续？")) return;
   state = defaultState();
+  periodEditorId = undefined;
   save();
   resetTimer();
   renderAll();

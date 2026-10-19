@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="styles/engine-motion.css" />
     <link rel="stylesheet" href="styles/projects.css" />
     <link rel="stylesheet" href="styles/daily-history.css" />
+    <link rel="stylesheet" href="styles/periods.css" />
   </head>
   <body>
     <div class="boot-screen" id="boot-screen" role="status" aria-live="polite">
@@ -125,13 +126,16 @@
             </div>
           </div>
 
-          <div class="mission-timeline" aria-label="地球航行时间线">
-            <div><strong>前太阳时代</strong><span>过去—2039</span></div>
-            <div><strong>刹车时代</strong><span>2039—2065</span></div>
-            <div><strong>逃逸时代</strong><span>2065—2145</span></div>
-            <div><strong>加速时代</strong><span>2145—2645</span></div>
-            <div><strong>减速时代</strong><span>3945—4645</span></div>
-            <div><strong>新太阳时代</strong><span>4645—未来</span></div>
+          <div class="mission-timeline" aria-label="个人时期规划">
+            <div class="period-heading">
+              <div>
+                <span class="period-kicker">PERSONAL TIMELINE</span>
+                <h2>我的时期</h2>
+              </div>
+              <button type="button" data-period-new>+ 规划时期</button>
+            </div>
+            <div id="period-list" class="period-list"></div>
+            <div id="period-editor"></div>
             <button class="timeline-cta" data-nav="focus">
               启动一段专注 <span aria-hidden="true">↗</span>
             </button>

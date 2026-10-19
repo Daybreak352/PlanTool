@@ -18,9 +18,7 @@ const prettyDate = (date = new Date()) =>
     weekday: "long",
   }).format(date);
 const minutesText = (minutes) =>
-  minutes >= 60
-    ? `${Math.floor(minutes / 60)}h ${minutes % 60 ? `${minutes % 60}m` : ""}`
-    : `${minutes}m`;
+  `${Math.floor(minutes / 60)}h ${minutes % 60}min`;
 const esc = (value) =>
   String(value).replace(
     /[&<>"]/g,
@@ -32,6 +30,7 @@ function defaultState() {
     version: "1.0",
     memos: [],
     dailyTasks: [],
+    periods: [],
     projects: [],
     records: [],
     timerSettings: { focus: 25, break: 5, rounds: 4 },
@@ -42,7 +41,11 @@ function hydrate() {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     // Keep extra fields from older backups without exposing removed features.
     if (saved && Array.isArray(saved.records))
-      return { ...defaultState(), ...saved };
+      return {
+        ...defaultState(),
+        ...saved,
+        periods: Array.isArray(saved.periods) ? saved.periods : [],
+      };
   } catch {
     /* Start fresh when backup data is unavailable. */
   }
@@ -52,6 +55,7 @@ function hydrate() {
 let state = hydrate();
 let activeView = "home";
 let memoFilter = "open";
+let periodEditorId;
 let dailyCursor = new Date();
 let statsCursor = new Date();
 let selectedStatsDate = dateKey();

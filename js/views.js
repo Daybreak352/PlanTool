@@ -28,6 +28,7 @@ function renderHome() {
         `<article class="metric-card"><div class="metric-label"><strong>${label}</strong><small>${translation}</small></div><div class="metric-value">${value}</div><div class="metric-note">${note}</div></article>`,
     )
     .join("");
+  renderPeriods();
   const dailyItems = state.dailyTasks.map((task) => ({
     title: task.title,
     meta: "每日任务",
@@ -58,6 +59,46 @@ function renderHome() {
         )
         .join("")
     : `<p class="empty">暂无未完成备忘录。</p>`;
+}
+
+function renderPeriods() {
+  const periods = [...state.periods].sort((a, b) =>
+    a.start.localeCompare(b.start),
+  );
+  document.querySelector("#period-list").innerHTML = periods.length
+    ? periods
+        .map(
+          (period, index) => `
+            <div class="period-row">
+              <span class="period-index">${String(index + 1).padStart(2, "0")}</span>
+              <div class="period-copy"><strong>${esc(period.title)}</strong><span>${esc(period.start.replace("-", "."))} — ${esc(period.end.replace("-", "."))}</span></div>
+              <div class="period-actions">
+                <button type="button" data-period-edit="${esc(period.id)}" aria-label="编辑时期：${esc(period.title)}">编辑</button>
+                <button type="button" data-period-delete="${esc(period.id)}" aria-label="删除时期：${esc(period.title)}">删除</button>
+              </div>
+            </div>`,
+        )
+        .join("")
+    : `<p class="period-empty">还没有规划时期。示例：基础积累期 · 2026.10—2027.03</p>`;
+
+  const editor = document.querySelector("#period-editor");
+  if (periodEditorId === undefined) {
+    editor.innerHTML = "";
+    return;
+  }
+  const period = state.periods.find((item) => item.id === periodEditorId);
+  editor.innerHTML = `
+    <form id="period-form" class="period-form">
+      <p class="period-form-title">${period ? "编辑时期" : "规划新时期"}</p>
+      <label for="period-title">时期名称</label>
+      <input id="period-title" name="title" maxlength="40" required placeholder="例如：基础积累期" value="${esc(period?.title || "")}" />
+      <div class="period-date-fields">
+        <div><label for="period-start">开始月份</label><input id="period-start" name="start" type="month" required value="${esc(period?.start || "")}" /></div>
+        <div><label for="period-end">结束月份</label><input id="period-end" name="end" type="month" required value="${esc(period?.end || "")}" /></div>
+      </div>
+      <p class="period-error" role="alert" hidden>结束月份不能早于开始月份。</p>
+      <div class="period-form-actions"><button type="submit">保存时期</button><button type="button" data-period-cancel>取消</button></div>
+    </form>`;
 }
 
 function renderFocus() {
