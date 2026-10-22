@@ -358,7 +358,7 @@ select {
       rgba(0, 0, 0, 0.48) 67%,
       rgba(0, 0, 0, 0.78) 100%
     ),
-    url("../assets/orbit-earth-hero.png") center / cover no-repeat;
+    url("../assets/orbit-earth-hero-engines.png") center / cover no-repeat;
   color: #f7f7f4;
 }
 #home-view::after {
