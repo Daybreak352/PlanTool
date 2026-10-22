@@ -104,7 +104,7 @@
   border-radius: 50%;
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.65), transparent 72%),
-    url("../assets/orbit-earth-hero-engines.png") 39% 46% / 780px auto no-repeat;
+    url("../assets/orbit-earth-hero-provided.jpg") 39% 46% / 780px auto no-repeat;
   box-shadow: 0 0 55px rgba(233, 233, 226, 0.16);
   animation: boot-breathe 3.2s ease-in-out infinite alternate;
 }
