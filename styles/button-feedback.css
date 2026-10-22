@@ -1,0 +1,49 @@
+/* A short, tactile press shared by static and dynamically rendered controls. */
+button:not(:disabled),
+input[type="checkbox"]:not(:disabled) {
+  --press-scale: 0.96;
+  scale: 1;
+  transition:
+    scale 280ms cubic-bezier(0.18, 1.55, 0.36, 1),
+    filter 180ms ease,
+    transform 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease;
+}
+
+/* Wide navigation rows should compress less than compact controls. */
+button.nav-item,
+button.project-switch {
+  --press-scale: 0.985;
+}
+
+button.icon-button,
+.month-controls button,
+button.project-remove,
+button.delete-icon {
+  --press-scale: 0.92;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button:not(:disabled):hover {
+    filter: brightness(1.04);
+  }
+}
+
+button:not(:disabled):is(:active, .is-key-pressed),
+input[type="checkbox"]:not(:disabled):active {
+  scale: var(--press-scale);
+  filter: brightness(1.15);
+  opacity: 1;
+  transition-duration: 75ms;
+  transition-timing-function: ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:not(:disabled):is(:active, .is-key-pressed),
+  input[type="checkbox"]:not(:disabled):active {
+    scale: 1;
+  }
+}
